@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+</head>
+<body>
+    <div id="app">
+        <aside>
+            <!-- Barra lateral -->
+            <ul>
+                <li>Tareas</li>
+                <li>
+                    <span id="togglePriorities">Priorities</span>
+                        <ul class="sub-menu">
+                            <li>High</li>
+                            <li>Medium</li>
+                            <li>Low</li>
+                        </ul>
+                </li>
+                <li>Proyectos</li>
+                <li>Fechas</li>
+            </ul>
+        </aside>
+        <main>
+            <!-- Contenido principal -->
+            <button id="addTaskButton">Añadir tarea</button>
+            <div id="tasks"></div>
+        </main>
+    </div>
+    <!-- No es necesario agregar manualmente el script bundle.js aquí, ya que HtmlWebpackPlugin lo hará automáticamente -->
+</body>
+</html>
