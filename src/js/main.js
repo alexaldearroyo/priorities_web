@@ -118,11 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
       addTaskButton.disabled = false;
     });
 
-    taskElement.appendChild(textInput);
-    taskElement.appendChild(prioritySelect);
-    taskElement.appendChild(dateInput);
-    taskElement.appendChild(addButton);
-    taskElement.appendChild(cancelButton);
+    const inputGroup = document.createElement("div"); // Crea un contenedor para el input de texto
+    inputGroup.appendChild(textInput);
+    taskElement.appendChild(inputGroup);
+
+    const controlsGroup = document.createElement("div"); // Crea un contenedor para el select, dateInput y los botones
+    controlsGroup.appendChild(prioritySelect);
+    controlsGroup.appendChild(dateInput);
+    controlsGroup.appendChild(addButton);
+    controlsGroup.appendChild(cancelButton);
+    taskElement.appendChild(controlsGroup);
+
 
     tasksContainer.appendChild(taskElement);
   });

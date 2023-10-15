@@ -83,21 +83,29 @@ button
 #tasks
   > div
     display: flex
-    align-items: center
-    justify-content: space-between
+    flex-direction: column
     background-color: #fff
     padding: 10px
     margin: 10px 0
     border-radius: 5px
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
 
-  input[type="text"]
-    flex: 1
-    padding: 5px 10px
-    margin-right: 10px
-    border: 1px solid #ccc
-    border-radius: 3px
+    > div
+      display: flex
+      align-items: center
+      justify-content: space-between
+      width: 100% 
+      margin-bottom: 10px
 
-  select,
-  input[type="date"]
-    margin-right: 10px
+    input[type="text"]
+      flex: 1
+      padding: 5px 10px
+      margin: 0 0 10px 0 // Elimina el margen derecho y agrega margen abajo.
+      border: 1px solid #ccc
+      border-radius: 3px
+      width: 100% // Se extenderá completamente, el padding interno mantendrá el texto alejado de los bordes
+
+    select,
+    input[type="date"]
+      margin-right: 10px
+
