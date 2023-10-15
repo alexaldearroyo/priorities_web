@@ -68,7 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.createElement("input");
     textInput.type = "text";
     textInput.placeholder = "Write your task here";
-    textInput.style.width = "100%"; // Asegurarse de que el input ocupe todo el ancho
+    textInput.style.width = "100%";
+    textInput.style.height = "40px";
+    textInput.style.fontSize = "14px";
 
     const actionContainer = document.createElement("div");
     actionContainer.style.display = "flex";
@@ -76,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     actionContainer.style.width = "100%"; 
 
     const priorityContainer = document.createElement("div");
+    priorityContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
     const priorityLabel = document.createElement("label");
     priorityLabel.textContent = "Priority";
     const prioritySelect = document.createElement("select");
@@ -89,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     priorityContainer.appendChild(prioritySelect);
 
     const dateContainer = document.createElement("div");
+    dateContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
     const dateLabel = document.createElement("label");
     dateLabel.textContent = "Date";
     const dateInput = document.createElement("input");
@@ -96,12 +100,16 @@ document.addEventListener("DOMContentLoaded", () => {
     dateContainer.appendChild(dateLabel);
     dateContainer.appendChild(dateInput);
 
-
+    const buttonsContainer = document.createElement("div"); // Nuevo contenedor para los botones
+    buttonsContainer.style.display = "flex";
+    buttonsContainer.style.flex = "2"; // Esto asegura que ocupe una fracción del espacio
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
+    buttonsContainer.appendChild(addButton); // Agrega el botón al nuevo contenedor
 
     const cancelButton = document.createElement("button");
     cancelButton.textContent = "Cancel";
+    buttonsContainer.appendChild(cancelButton); // Agrega el botón al nuevo contenedor
 
     const inputGroup = document.createElement("div");
     inputGroup.appendChild(textInput);
@@ -109,8 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     actionContainer.appendChild(priorityContainer);
     actionContainer.appendChild(dateContainer);
-    actionContainer.appendChild(addButton);
-    actionContainer.appendChild(cancelButton);
+    actionContainer.appendChild(buttonsContainer); // Agrega el contenedor de botones al actionContainer
+
 
     taskElement.appendChild(actionContainer);
 
