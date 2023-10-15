@@ -56,6 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
     tasksContainer.appendChild(task);
   }
 
+
+  ////////////////////////////// TAREAS
+
+
   addTaskButton.addEventListener("click", () => {
     addTaskButton.disabled = true;
 
@@ -63,8 +67,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const textInput = document.createElement("input");
     textInput.type = "text";
-    textInput.placeholder = "Escribe tu tarea aquí";
+    textInput.placeholder = "Write your task here";
+    textInput.style.width = "100%"; // Asegurarse de que el input ocupe todo el ancho
 
+    const actionContainer = document.createElement("div");
+    actionContainer.style.display = "flex";
+    actionContainer.style.justifyContent = "space-between";
+    actionContainer.style.width = "100%"; 
+
+    const priorityContainer = document.createElement("div");
+    const priorityLabel = document.createElement("label");
+    priorityLabel.textContent = "Priority";
     const prioritySelect = document.createElement("select");
     ["High", "Medium", "Low"].forEach((priority) => {
       const option = document.createElement("option");
@@ -72,13 +85,35 @@ document.addEventListener("DOMContentLoaded", () => {
       option.textContent = priority;
       prioritySelect.appendChild(option);
     });
+    priorityContainer.appendChild(priorityLabel);
+    priorityContainer.appendChild(prioritySelect);
 
+    const dateContainer = document.createElement("div");
+    const dateLabel = document.createElement("label");
+    dateLabel.textContent = "Date";
     const dateInput = document.createElement("input");
     dateInput.type = "date";
+    dateContainer.appendChild(dateLabel);
+    dateContainer.appendChild(dateInput);
+
 
     const addButton = document.createElement("button");
-    addButton.textContent = "Agregar";
-    addButton.classList.add("add-button");  
+    addButton.textContent = "Add";
+
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancel";
+
+    const inputGroup = document.createElement("div");
+    inputGroup.appendChild(textInput);
+    taskElement.appendChild(inputGroup);
+
+    actionContainer.appendChild(priorityContainer);
+    actionContainer.appendChild(dateContainer);
+    actionContainer.appendChild(addButton);
+    actionContainer.appendChild(cancelButton);
+
+    taskElement.appendChild(actionContainer);
+
     addButton.addEventListener("click", () => {
       if (textInput.value) {
         const taskTimestamp = Date.now();
@@ -111,27 +146,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancelar";
     cancelButton.addEventListener("click", () => {
       taskElement.remove();
       addTaskButton.disabled = false;
     });
 
-    const inputGroup = document.createElement("div"); // Crea un contenedor para el input de texto
-    inputGroup.appendChild(textInput);
-    taskElement.appendChild(inputGroup);
-
-    const controlsGroup = document.createElement("div"); // Crea un contenedor para el select, dateInput y los botones
-    controlsGroup.appendChild(prioritySelect);
-    controlsGroup.appendChild(dateInput);
-    controlsGroup.appendChild(addButton);
-    controlsGroup.appendChild(cancelButton);
-    taskElement.appendChild(controlsGroup);
-
-
-    tasksContainer.appendChild(taskElement);
+      tasksContainer.appendChild(taskElement);
   });
+  ///////////////
 
   // Aquí empieza el código para el toggle del submenú
   const prioritiesToggle = document.getElementById("togglePriorities");

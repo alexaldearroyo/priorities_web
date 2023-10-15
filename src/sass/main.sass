@@ -96,16 +96,40 @@ button
       justify-content: space-between
       width: 100% 
       margin-bottom: 10px
+      gap: 10px
 
     input[type="text"]
       flex: 1
       padding: 5px 10px
-      margin: 0 0 10px 0 // Elimina el margen derecho y agrega margen abajo.
+      margin: 0 0 10px 0
       border: 1px solid #ccc
       border-radius: 3px
-      width: 100% // Se extenderá completamente, el padding interno mantendrá el texto alejado de los bordes
+      width: 100% 
+      box-sizing: border-box
 
     select,
-    input[type="date"]
+    input[type="date"],
+    button
+      flex: 1
+      box-sizing: border-box
       margin-right: 10px
+
+        // Esto es para que los contenedores de priority y date estén en línea
+    div
+      display: flex
+      align-items: center
+      gap: 5px
+
+    label
+      margin-right: 5px
+
+    button
+      flex: 1
+      margin-right: 10px
+
+    button:last-child
+      margin-right: 0
+
+
+
 
