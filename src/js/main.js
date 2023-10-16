@@ -131,12 +131,44 @@ document.addEventListener("DOMContentLoaded", () => {
   const prioritiesToggle = document.getElementById("togglePriorities");
   const subMenu = document.querySelector(".sub-menu");
   const parentLi = prioritiesToggle.parentElement;
+  const tasksLabel = document.querySelector("aside ul li:first-child");
+
+  // Event listener for "Tasks"
+  tasksLabel.addEventListener("click", displayAllTasks);
+
+  function displayAllTasks() {
+    const allTasks = loadTasksFromLocalStorage();
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.innerHTML = ''; // Clear the current tasks
+    for (const taskData of allTasks) {
+        tasksContainer.appendChild(createTaskElement(taskData));
+    }
+  }
 
   prioritiesToggle.addEventListener("click", () => {
     const isSubMenuVisible = subMenu.style.display === "block";
     subMenu.style.display = isSubMenuVisible ? "none" : "block";
     parentLi.classList.toggle("sub-menu-opened", !isSubMenuVisible);
   });
+
+
+  // Filter tasks by priority
+  subMenu.addEventListener("click", (event) => {
+    if (event.target.tagName === "LI") {
+        const selectedPriority = event.target.textContent;
+        filterTasksByPriority(selectedPriority);
+    }
+  });
+
+  function filterTasksByPriority(priority) {
+      const allTasks = loadTasksFromLocalStorage();
+      const filteredTasks = allTasks.filter(task => task.priority === priority);
+      const tasksContainer = document.getElementById("tasks");
+      tasksContainer.innerHTML = ''; // Clear the current tasks
+      for (const taskData of filteredTasks) {
+          tasksContainer.appendChild(createTaskElement(taskData));
+      }
+  }
 
   // Sidebar toggle
   const toggleSidebarButton = document.getElementById("toggleSidebar");

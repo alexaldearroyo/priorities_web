@@ -1,5 +1,3 @@
-// constants.js
-
 // Priorities for tasks
 export const PRIORITIES = ["High", "Medium", "Low"];
 
@@ -17,5 +15,3 @@ export const DATE_LABEL = "Date";
 export const ADD_BUTTON_TEXT = "Add";
 export const CANCEL_BUTTON_TEXT = "Cancel";
 export const COMPLETE_BUTTON_TEXT = "Complete";
-
-// You can add more constants here if needed.
