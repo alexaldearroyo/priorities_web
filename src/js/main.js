@@ -137,4 +137,12 @@ document.addEventListener("DOMContentLoaded", () => {
     subMenu.style.display = isSubMenuVisible ? "none" : "block";
     parentLi.classList.toggle("sub-menu-opened", !isSubMenuVisible);
   });
+
+  // Sidebar toggle
+  const toggleSidebarButton = document.getElementById("toggleSidebar");
+  const sidebar = document.querySelector("aside");
+
+  toggleSidebarButton.addEventListener("click", () => {
+      sidebar.classList.toggle("hidden");
+  });
 });

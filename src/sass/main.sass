@@ -7,7 +7,7 @@ $color-inverse: #ecf0f1
 $font-main: 'Arial', sans-serif
 $common-height: 30px
 
-// Reset básico y estilos globales
+// Basic reset and global settings
 *
   margin: 0
   padding: 0
@@ -19,7 +19,38 @@ body
   color: $color-main
   padding: 10%
 
-// Estructura principal
+// Hamburger Menu Styles
+.hamburger-menu
+  background: none
+  border: none
+  font-size: 2em
+  cursor: pointer
+  color: $color-main
+  margin-right: 20px
+  padding: 0
+  display: inline
+  outline: none
+  transition: none
+  min-width: 0
+
+  &:hover, &:focus
+    color: blue
+    border: none
+    outline: none
+    background: none
+
+
+// Style for hidden sidebar
+aside.hidden
+  display: none
+
+
+#app-title
+  font-family: 'Courier New', Courier, monospace
+  font-size: 2em
+  font-weight: bold
+
+// Main structure
 #app
   display: flex
   max-width: 1200px

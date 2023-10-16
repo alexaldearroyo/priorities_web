@@ -9,23 +9,46 @@ export function createTaskElement(taskData) {
     const task = document.createElement('div');
     task.classList.add('task');
     task.dataset.timestamp = taskData.timestamp;
-    task.innerHTML = `
-      <div class="task-text">${taskData.text}</div>
-      <div class="task-details">
-          <div class="custom-container priority-container">
-            <label>Priority:</label>
-            <span>${taskData.priority}</span>
-          </div>
-          <div class="custom-container date-container">
-            <label>Date:</label>
-            <span>${taskData.date}</span>
-          </div>
-        <button class="complete-button">Complete</button>
-      </div>
-    `;
-    task.querySelector(".complete-button").addEventListener("click", function() {
+
+    const taskText = document.createElement('div');
+    taskText.classList.add('task-text');
+    taskText.textContent = taskData.text;
+    task.appendChild(taskText);
+
+    const taskDetails = document.createElement('div');
+    taskDetails.classList.add('task-details');
+
+    const priorityContainer = document.createElement('div');
+    priorityContainer.classList.add('custom-container', 'priority-container');
+    const priorityLabel = document.createElement('label');
+    priorityLabel.textContent = "Priority:";
+    const prioritySpan = document.createElement('span');
+    prioritySpan.textContent = taskData.priority;
+    // priorityContainer.appendChild(priorityLabel);
+    priorityContainer.appendChild(prioritySpan);
+
+    const dateContainer = document.createElement('div');
+    dateContainer.classList.add('custom-container', 'date-container');
+    const dateLabel = document.createElement('label');
+    dateLabel.textContent = "Date:";
+    const dateSpan = document.createElement('span');
+    dateSpan.textContent = taskData.date;
+    // dateContainer.appendChild(dateLabel);
+    dateContainer.appendChild(dateSpan);
+
+    const completeButton = document.createElement('button');
+    completeButton.classList.add('complete-button');
+    completeButton.textContent = "Complete";
+    completeButton.addEventListener("click", function() {
       removeTask(this);
     });
+
+    taskDetails.appendChild(priorityContainer);
+    taskDetails.appendChild(dateContainer);
+    taskDetails.appendChild(completeButton);
+
+    task.appendChild(taskDetails);
+
     return task;
 }
 
