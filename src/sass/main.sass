@@ -1,14 +1,22 @@
+// Variables
+$bg-color-main: #f4f4f4
+$bg-color-aside: #2c3e50
+$bg-color-button: #e74c3c
+$color-main: #333
+$color-inverse: #ecf0f1
+$font-main: 'Arial', sans-serif
+
 // Reset básico y estilos globales
 *
   margin: 0
   padding: 0
   box-sizing: border-box
-  font-family: 'Arial', sans-serif
+  font-family: $font-main
 
 body
-  background-color: #f4f4f4
-  color: #333
-  padding: 10% // Espacio entre el contenido y el borde de la ventana
+  background-color: $bg-color-main
+  color: $color-main
+  padding: 10%
 
 // Estructura principal
 #app
@@ -17,78 +25,129 @@ body
   margin: 40px auto
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1)
 
-aside
-  width: 250px
-  background-color: #2c3e50
-  color: #ecf0f1
-  padding: 20px
+  aside
+    width: 250px
+    background-color: $bg-color-aside
+    color: $color-inverse
+    padding: 20px
 
-  ul
-    list-style-type: none
+    ul, li, .sub-menu li
+      list-style-type: none
+      margin-bottom: 10px
+      font-size: 1em
+      line-height: 1.5em
 
-  li, .sub-menu li
-    margin-bottom: 10px
-    font-size: 1em
-    line-height: 1.5em // Ajusta la altura de línea para una mejor espaciación vertical
+    #togglePriorities
+      cursor: pointer
+      display: block
 
-  #togglePriorities
-    cursor: pointer
-    display: block // Asegura que se muestre como un bloque para un relleno consistente
+      &:before
+        content: ">"
+        display: inline-block
+        margin-right: 5px
+        font-weight: bold
 
-    &:before
-      content: ">"
-      display: inline-block
-      margin-right: 5px
-      font-weight: bold
-
-  li.sub-menu-opened
-    #togglePriorities:before
-      content: "v"
-
-  > ul
-    > li:first-child
-      margin-top: 20px // Espacio superior para "High"
+    li.sub-menu-opened
+      #togglePriorities:before
+        content: "v"
 
   .sub-menu
-    margin-left: 20px // Indentación del submenú
-    li:first-child
-      margin-top: 10px  // Ajusta este valor según la cantidad de margen que desees.
+    margin-left: 20px
+    display: none
+
+  .custom-container
+    background-color: blue
+    padding: 5px 10px
+    border-radius: 5px
+    label
+      color: $color-inverse
 
 
-.sub-menu
-  display: none
+  // haz que los elementos de la clase buttons-container tengan la misma anchura
+  .buttons-container
+    // display: flex
+    button
+      // flex: 1
+      margin: 5px
+      min-width: 100px
 
-main
-  flex: 1
-  background-color: #ecf0f1
-  padding: 20px
+  main
+    flex: 1
+    background-color: $color-inverse
+    padding: 20px
 
-button
-  background-color: #e74c3c
-  color: #ecf0f1
-  padding: 10px 20px
-  border: none
-  border-radius: 5px
-  cursor: pointer
-  transition: background-color 0.3s ease
+  button
+    background-color: $bg-color-button
+    color: $color-inverse
+    padding: 10px 20px
+    border: none
+    border-radius: 5px
+    cursor: pointer
+    transition: background-color 0.3s ease
 
-  &.add-button
-    margin-right: 10px // o cualquier valor que desees
+    &.add-button
+      margin-right: 10px
 
-
-  &:hover
-    background-color: #c0392b
+    &:hover
+      background-color: darken($bg-color-button, 10%)
 
 // Estilos específicos para tareas
 #tasks
   > div
     display: flex
     flex-direction: column
-    background-color: #fff
+    background-color: $color-inverse
     padding: 10px
+    padding-top: 20px
     margin: 10px 0
     border-radius: 5px
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+
+    .task-details
+      display: flex
+      justify-content: space-between
+      align-items: center
+      gap: 10px
+      margin-top: 20px
+      margin-bottom: 20px
+
+      .custom-container, button
+        flex: 1
+        min-width: 100px
+        overflow: hidden
+
+      .custom-container
+        background-color: blue
+        padding: 5px 10px
+        border-radius: 5px
+        height: 30px
+        label, span
+          color: $color-inverse
+          line-height: 20px
+          white-space: nowrap
+          overflow: hidden
+          text-overflow: ellipsis
+
+      .custom-container span
+        font-size: 0.8em
+
+      button
+        border: none
+        background-color: $bg-color-button
+        color: $color-inverse
+        border-radius: 5px
+        cursor: pointer
+        transition: background-color 0.3s ease
+        line-height: 20px
+        padding: 5px 10px
+        min-width: 100px 
+        margin: 0
+
+        &.add-button
+          margin-right: 10px
+
+        &:hover
+          background-color: darken($bg-color-button, 10%)
 
     > div
       display: flex
@@ -98,38 +157,34 @@ button
       margin-bottom: 10px
       gap: 10px
 
-    input[type="text"]
-      flex: 1
-      padding: 5px 10px
-      margin: 0 0 10px 0
-      border: 1px solid #ccc
-      border-radius: 3px
-      width: 100% 
-      box-sizing: border-box
+      .custom-container, button, input[type="text"], select, input[type="date"]
+        flex: 1
 
-    select,
-    input[type="date"],
-    button
-      flex: 1
-      box-sizing: border-box
-      margin-right: 10px
+      input[type="text"]
+        flex: 1
+        padding: 5px 10px
+        margin: 0 0 10px 0
+        border: 1px solid #ccc
+        border-radius: 3px
 
-        // Esto es para que los contenedores de priority y date estén en línea
-    div
-      display: flex
-      align-items: center
-      gap: 5px
+      select, input[type="date"], button
+        flex: 1
+        box-sizing: border-box
+        margin-right: 5px
+        margin-left: 10px
 
-    label
-      margin-right: 5px
+      div
+        display: flex
+        align-items: center
+        gap: 5px
 
-    button
-      flex: 1
-      margin-right: 10px
+        label
+          margin-right: 5px
 
-    button:last-child
-      margin-right: 0
+        button
+          flex: 1
+          margin-right: 10px
 
-
-
+          &:last-child
+            margin-right: 0
 

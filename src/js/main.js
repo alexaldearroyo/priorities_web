@@ -1,4 +1,4 @@
-// Importa el archivo SASS
+// Import the SASS file
 import "../sass/main.sass";
 
 function saveTasksToLocalStorage(tasks) {
@@ -7,58 +7,58 @@ function saveTasksToLocalStorage(tasks) {
 
 function loadTasksFromLocalStorage() {
   const storedTasks = localStorage.getItem("tasks");
-  if (storedTasks) {
-    return JSON.parse(storedTasks).filter(task => task.timestamp);
-  }
-  return [];
+  return storedTasks ? JSON.parse(storedTasks).filter(task => task.timestamp) : [];
 }
 
+function removeTask(buttonElement) {
+  const taskElement = buttonElement.parentElement.parentElement;
+  const taskTimestamp = taskElement.dataset.timestamp;
+
+  taskElement.remove();
+
+  const tasks = loadTasksFromLocalStorage().filter(task => task.timestamp && task.timestamp.toString() !== taskTimestamp);
+  saveTasksToLocalStorage(tasks);
+}
+  
+function createTaskElement(taskData) {
+  const task = document.createElement('div');
+  task.dataset.timestamp = taskData.timestamp;
+  task.innerHTML = `
+    ${taskData.text} 
+    <div class="task-details">
+        <div class="custom-container">
+          <label>Priority:</label>
+          <span>${taskData.priority}</span>
+        </div>
+        <div class="custom-container">
+          <label>Date:</label>
+          <span>${taskData.date}</span>
+        </div>
+      <button>Complete</button>
+    </div>
+  `;
+  task.querySelector("button").addEventListener("click", function() {
+    removeTask(this);
+  });
+  return task;
+}
+
+
+// New Task Box
 document.addEventListener("DOMContentLoaded", () => {
   const addTaskButton = document.getElementById("addTaskButton");
   const tasksContainer = document.getElementById("tasks");
 
-  function removeTask(buttonElement) {
-    const taskElement = buttonElement.parentElement;
-    const taskTimestamp = taskElement.dataset.timestamp;
-
-    console.log("Timestamp de la tarea a eliminar:", taskTimestamp); // Añade este log
-
-
-    // Elimina la tarea del DOM
-    taskElement.remove();
-
-    // Elimina la tarea del localStorage
-    const tasks = loadTasksFromLocalStorage();
-    console.log("Tareas antes de filtrar:", tasks); // Añade este log
-
-
-    const updatedTasks = tasks.filter(task => task.timestamp && task.timestamp.toString() !== taskTimestamp);
-    console.log("Tareas después de filtrar:", updatedTasks); // Añade este log
-
-
-    saveTasksToLocalStorage(updatedTasks);
-  }
+  tasksContainer.addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON" && event.target.textContent === "Complete") {
+      removeTask(event.target);
+    }
+  });
 
   const storedTasks = loadTasksFromLocalStorage();
   for (const taskData of storedTasks) {
-    const task = document.createElement('div');
-    task.dataset.timestamp = taskData.timestamp;
-    task.innerHTML = `
-        ${taskData.text} - ${taskData.priority} - ${taskData.date}
-        <button>Eliminar</button>
-    `;
-
-    // Agregamos el evento de escucha al botón dentro de la tarea
-    task.querySelector("button").addEventListener("click", function() {
-      removeTask(this);
-    });
-
-    tasksContainer.appendChild(task);
+    tasksContainer.appendChild(createTaskElement(taskData));
   }
-
-
-  ////////////////////////////// TAREAS
-
 
   addTaskButton.addEventListener("click", () => {
     addTaskButton.disabled = true;
@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     actionContainer.style.width = "100%"; 
 
     const priorityContainer = document.createElement("div");
+    priorityContainer.classList.add("custom-container"); // Añadir esta línea
     priorityContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
     const priorityLabel = document.createElement("label");
     priorityLabel.textContent = "Priority";
@@ -92,6 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
     priorityContainer.appendChild(prioritySelect);
 
     const dateContainer = document.createElement("div");
+    dateContainer.classList.add("custom-container"); // Añadir esta línea
+
     dateContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
     const dateLabel = document.createElement("label");
     dateLabel.textContent = "Date";
@@ -101,8 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
     dateContainer.appendChild(dateInput);
 
     const buttonsContainer = document.createElement("div"); // Nuevo contenedor para los botones
+    buttonsContainer.classList.add("buttons-container"); // crea una nueva clase para el contenedor de los botones
+    
     buttonsContainer.style.display = "flex";
-    buttonsContainer.style.flex = "2"; // Esto asegura que ocupe una fracción del espacio
+    buttonsContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
     buttonsContainer.appendChild(addButton); // Agrega el botón al nuevo contenedor
@@ -125,28 +130,17 @@ document.addEventListener("DOMContentLoaded", () => {
     addButton.addEventListener("click", () => {
       if (textInput.value) {
         const taskTimestamp = Date.now();
-
-        const task = document.createElement("div");
-        task.dataset.timestamp = taskTimestamp;
-        task.innerHTML = `
-            ${textInput.value} - ${prioritySelect.value} - ${dateInput.value}
-            <button>Eliminar</button>
-        `;
-
-        task.querySelector("button").addEventListener("click", function() {
-          removeTask(this);
-        });
-
-        tasksContainer.appendChild(task);
-
-        // Agregar la tarea al localStorage
-        const tasks = loadTasksFromLocalStorage();
-        tasks.push({
+        const taskData = {
           timestamp: taskTimestamp,
           text: textInput.value,
           priority: prioritySelect.value,
-          date: dateInput.value,
-        });
+          date: dateInput.value
+        };
+        tasksContainer.appendChild(createTaskElement(taskData));
+
+        // Agregar la tarea al localStorage
+        const tasks = loadTasksFromLocalStorage();
+        tasks.push(taskData);
         saveTasksToLocalStorage(tasks);
 
         taskElement.remove();
@@ -163,18 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   ///////////////
 
-  // Aquí empieza el código para el toggle del submenú
+  // Priorities SUbmenu
   const prioritiesToggle = document.getElementById("togglePriorities");
   const subMenu = document.querySelector(".sub-menu");
   const parentLi = prioritiesToggle.parentElement;
 
   prioritiesToggle.addEventListener("click", () => {
-    if (subMenu.style.display === "none" || !subMenu.style.display) {
-      subMenu.style.display = "block";
-      parentLi.classList.add("sub-menu-opened");
-    } else {
-      subMenu.style.display = "none";
-      parentLi.classList.remove("sub-menu-opened");
-    }
+    const isSubMenuVisible = subMenu.style.display === "block";
+    subMenu.style.display = isSubMenuVisible ? "none" : "block";
+    parentLi.classList.toggle("sub-menu-opened", !isSubMenuVisible);
   });
 });
