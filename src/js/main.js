@@ -22,22 +22,23 @@ function removeTask(buttonElement) {
   
 function createTaskElement(taskData) {
   const task = document.createElement('div');
+  task.classList.add('task');
   task.dataset.timestamp = taskData.timestamp;
   task.innerHTML = `
-    ${taskData.text} 
+    <div class="task-text">${taskData.text}</div>
     <div class="task-details">
-        <div class="custom-container">
+        <div class="custom-container priority-container">
           <label>Priority:</label>
           <span>${taskData.priority}</span>
         </div>
-        <div class="custom-container">
+        <div class="custom-container date-container">
           <label>Date:</label>
           <span>${taskData.date}</span>
         </div>
-      <button>Complete</button>
+      <button class="complete-button">Complete</button>
     </div>
   `;
-  task.querySelector("button").addEventListener("click", function() {
+  task.querySelector(".complete-button").addEventListener("click", function() {
     removeTask(this);
   });
   return task;
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tasksContainer = document.getElementById("tasks");
 
   tasksContainer.addEventListener("click", (event) => {
-    if (event.target.tagName === "BUTTON" && event.target.textContent === "Complete") {
+    if (event.target.classList.contains("complete-button")) {
       removeTask(event.target);
     }
   });
@@ -64,22 +65,18 @@ document.addEventListener("DOMContentLoaded", () => {
     addTaskButton.disabled = true;
 
     const taskElement = document.createElement("div");
+    taskElement.classList.add("new-task");
 
     const textInput = document.createElement("input");
     textInput.type = "text";
     textInput.placeholder = "Write your task here";
-    textInput.style.width = "100%";
-    textInput.style.height = "40px";
-    textInput.style.fontSize = "14px";
+    textInput.classList.add("task-input");
 
     const actionContainer = document.createElement("div");
-    actionContainer.style.display = "flex";
-    actionContainer.style.justifyContent = "space-between";
-    actionContainer.style.width = "100%"; 
+    actionContainer.classList.add("action-container");
 
     const priorityContainer = document.createElement("div");
-    priorityContainer.classList.add("custom-container"); // Añadir esta línea
-    priorityContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
+    priorityContainer.classList.add("custom-container", "priority-container");
     const priorityLabel = document.createElement("label");
     priorityLabel.textContent = "Priority";
     const prioritySelect = document.createElement("select");
@@ -93,9 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
     priorityContainer.appendChild(prioritySelect);
 
     const dateContainer = document.createElement("div");
-    dateContainer.classList.add("custom-container"); // Añadir esta línea
+    dateContainer.classList.add("custom-container", "date-container");
 
-    dateContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
     const dateLabel = document.createElement("label");
     dateLabel.textContent = "Date";
     const dateInput = document.createElement("input");
@@ -103,27 +99,25 @@ document.addEventListener("DOMContentLoaded", () => {
     dateContainer.appendChild(dateLabel);
     dateContainer.appendChild(dateInput);
 
-    const buttonsContainer = document.createElement("div"); // Nuevo contenedor para los botones
-    buttonsContainer.classList.add("buttons-container"); // crea una nueva clase para el contenedor de los botones
-    
-    buttonsContainer.style.display = "flex";
-    buttonsContainer.style.flex = "1"; // Esto asegura que ocupe una fracción del espacio
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.classList.add("buttons-container");
+
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
-    buttonsContainer.appendChild(addButton); // Agrega el botón al nuevo contenedor
+    buttonsContainer.appendChild(addButton);
 
     const cancelButton = document.createElement("button");
     cancelButton.textContent = "Cancel";
-    buttonsContainer.appendChild(cancelButton); // Agrega el botón al nuevo contenedor
+    buttonsContainer.appendChild(cancelButton);
 
     const inputGroup = document.createElement("div");
+    inputGroup.classList.add("input-group");
     inputGroup.appendChild(textInput);
     taskElement.appendChild(inputGroup);
 
     actionContainer.appendChild(priorityContainer);
     actionContainer.appendChild(dateContainer);
-    actionContainer.appendChild(buttonsContainer); // Agrega el contenedor de botones al actionContainer
-
+    actionContainer.appendChild(buttonsContainer);
 
     taskElement.appendChild(actionContainer);
 
@@ -157,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   ///////////////
 
-  // Priorities SUbmenu
+  // Priorities Submenu
   const prioritiesToggle = document.getElementById("togglePriorities");
   const subMenu = document.querySelector(".sub-menu");
   const parentLi = prioritiesToggle.parentElement;

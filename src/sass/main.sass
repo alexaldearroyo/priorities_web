@@ -5,6 +5,7 @@ $bg-color-button: #e74c3c
 $color-main: #333
 $color-inverse: #ecf0f1
 $font-main: 'Arial', sans-serif
+$common-height: 30px
 
 // Reset básico y estilos globales
 *
@@ -55,41 +56,56 @@ body
     margin-left: 20px
     display: none
 
-  .custom-container
-    background-color: blue
-    padding: 5px 10px
-    border-radius: 5px
-    label
-      color: $color-inverse
-
-
-  // haz que los elementos de la clase buttons-container tengan la misma anchura
-  .buttons-container
-    // display: flex
-    button
-      // flex: 1
-      margin: 5px
-      min-width: 100px
-
   main
     flex: 1
     background-color: $color-inverse
     padding: 20px
 
-  button
-    background-color: $bg-color-button
+// Estilos comunes
+.custom-container
+  background-color: blue
+  padding: 5px 10px
+  border-radius: 5px
+  height: $common-height
+  label, span
     color: $color-inverse
-    padding: 10px 20px
-    border: none
-    border-radius: 5px
-    cursor: pointer
-    transition: background-color 0.3s ease
+    line-height: 20px
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
 
-    &.add-button
-      margin-right: 10px
+  span
+    font-size: 0.8em
 
-    &:hover
-      background-color: darken($bg-color-button, 10%)
+.buttons-container
+  display: flex
+
+button
+  height: $common-height
+  background-color: $bg-color-button
+  color: $color-inverse
+  padding: 10px 20px
+  border: none
+  border-radius: 5px
+  cursor: pointer
+  transition: background-color 0.3s ease
+  margin: 5px
+  min-width: 100px
+  // make text size bigger
+  font-size: 14px
+  text-align: center
+
+  &.add-button
+    margin-right: 10px
+
+  &:hover
+    background-color: darken($bg-color-button, 10%)
+
+#addTaskButton
+  display: flex
+  align-items: center
+  justify-content: center
+
 
 // Estilos específicos para tareas
 #tasks
@@ -108,7 +124,7 @@ body
       justify-content: space-between
       align-items: center
       gap: 10px
-      margin-top: 20px
+      margin-top: 15px
       margin-bottom: 20px
 
       .custom-container, button
@@ -116,59 +132,25 @@ body
         min-width: 100px
         overflow: hidden
 
-      .custom-container
-        background-color: blue
-        padding: 5px 10px
-        border-radius: 5px
-        height: 30px
-        label, span
-          color: $color-inverse
-          line-height: 20px
-          white-space: nowrap
-          overflow: hidden
-          text-overflow: ellipsis
-
-      .custom-container span
-        font-size: 0.8em
-
-      button
-        border: none
-        background-color: $bg-color-button
-        color: $color-inverse
-        border-radius: 5px
-        cursor: pointer
-        transition: background-color 0.3s ease
-        line-height: 20px
-        padding: 5px 10px
-        min-width: 100px 
-        margin: 0
-
-        &.add-button
-          margin-right: 10px
-
-        &:hover
-          background-color: darken($bg-color-button, 10%)
-
     > div
       display: flex
       align-items: center
       justify-content: space-between
-      width: 100% 
-      margin-bottom: 10px
+      width: 100%
+      // margin-bottom: 10px
       gap: 10px
+      padding-left: 10px
 
       .custom-container, button, input[type="text"], select, input[type="date"]
         flex: 1
 
       input[type="text"]
-        flex: 1
         padding: 5px 10px
         margin: 0 0 10px 0
         border: 1px solid #ccc
         border-radius: 3px
 
       select, input[type="date"], button
-        flex: 1
         box-sizing: border-box
         margin-right: 5px
         margin-left: 10px
@@ -182,9 +164,87 @@ body
           margin-right: 5px
 
         button
-          flex: 1
           margin-right: 10px
 
           &:last-child
             margin-right: 0
 
+.task
+  background-color: #fff
+  border-radius: 5px
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+  margin: 10px 0
+  padding: 20px
+  .task-text
+    font-size: 16px
+    font-weight: bold
+    // margin-bottom: 10px
+
+  .task-details
+    align-items: center
+    display: flex
+    justify-content: space-between
+
+  .custom-container
+    align-items: center
+    display: flex
+    margin-right: 10px
+
+    label
+      margin-right: 5px
+
+    span
+      font-size: 14px
+
+  .complete-button
+    background-color: #e74c3c
+    border: none
+    border-radius: 5px
+    color: #fff
+    cursor: pointer
+    padding: 5px 10px
+    transition: background-color 0.3s ease
+
+    &:hover
+      background-color: darken(#e74c3c, 10%)
+
+.new-task
+  background-color: #fff
+  border-radius: 5px
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+  margin: 10px 0
+  padding: 10px
+
+  .input-group
+    margin-bottom: 10px
+
+  .task-input
+    font-size: 14px
+    height: 40px
+    width: 100%
+
+  .action-container
+    align-items: center
+    display: flex
+    justify-content: space-between
+    width: 100%
+
+  .custom-container
+    align-items: center
+    display: flex
+    margin-right: 10px
+
+    label
+      margin-right: 5px
+
+    span
+      font-size: 14px
+
+  .buttons-container
+    flex: 1
+
+  button
+    padding: 0px 10px
+
+  .priority-container, .date-container
+    flex: 1
