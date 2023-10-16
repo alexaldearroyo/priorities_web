@@ -1,49 +1,26 @@
 // Import the SASS file
 import "../sass/main.sass";
 
-function saveTasksToLocalStorage(tasks) {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+// Import functions and constants from the modularized files
+import {
+  saveTasksToLocalStorage,
+  loadTasksFromLocalStorage
+} from './localStorageManager.js';
 
-function loadTasksFromLocalStorage() {
-  const storedTasks = localStorage.getItem("tasks");
-  return storedTasks ? JSON.parse(storedTasks).filter(task => task.timestamp) : [];
-}
+import {
+  createTaskElement,
+  removeTask
+} from './taskManager.js';
 
-function removeTask(buttonElement) {
-  const taskElement = buttonElement.parentElement.parentElement;
-  const taskTimestamp = taskElement.dataset.timestamp;
-
-  taskElement.remove();
-
-  const tasks = loadTasksFromLocalStorage().filter(task => task.timestamp && task.timestamp.toString() !== taskTimestamp);
-  saveTasksToLocalStorage(tasks);
-}
-  
-function createTaskElement(taskData) {
-  const task = document.createElement('div');
-  task.classList.add('task');
-  task.dataset.timestamp = taskData.timestamp;
-  task.innerHTML = `
-    <div class="task-text">${taskData.text}</div>
-    <div class="task-details">
-        <div class="custom-container priority-container">
-          <label>Priority:</label>
-          <span>${taskData.priority}</span>
-        </div>
-        <div class="custom-container date-container">
-          <label>Date:</label>
-          <span>${taskData.date}</span>
-        </div>
-      <button class="complete-button">Complete</button>
-    </div>
-  `;
-  task.querySelector(".complete-button").addEventListener("click", function() {
-    removeTask(this);
-  });
-  return task;
-}
-
+import {
+  PRIORITIES,
+  TASK_INPUT_PLACEHOLDER,
+  PRIORITY_LABEL,
+  DATE_LABEL,
+  ADD_BUTTON_TEXT,
+  CANCEL_BUTTON_TEXT,
+  COMPLETE_BUTTON_TEXT
+} from './constants.js';
 
 // New Task Box
 document.addEventListener("DOMContentLoaded", () => {
@@ -69,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const textInput = document.createElement("input");
     textInput.type = "text";
-    textInput.placeholder = "Write your task here";
+    textInput.placeholder = TASK_INPUT_PLACEHOLDER;
     textInput.classList.add("task-input");
 
     const actionContainer = document.createElement("div");
@@ -78,9 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const priorityContainer = document.createElement("div");
     priorityContainer.classList.add("custom-container", "priority-container");
     const priorityLabel = document.createElement("label");
-    priorityLabel.textContent = "Priority";
+    priorityLabel.textContent = PRIORITY_LABEL;
     const prioritySelect = document.createElement("select");
-    ["High", "Medium", "Low"].forEach((priority) => {
+    PRIORITIES.forEach((priority) => {
       const option = document.createElement("option");
       option.value = priority;
       option.textContent = priority;
@@ -93,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dateContainer.classList.add("custom-container", "date-container");
 
     const dateLabel = document.createElement("label");
-    dateLabel.textContent = "Date";
+    dateLabel.textContent = DATE_LABEL;
     const dateInput = document.createElement("input");
     dateInput.type = "date";
     dateContainer.appendChild(dateLabel);
@@ -103,11 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
     buttonsContainer.classList.add("buttons-container");
 
     const addButton = document.createElement("button");
-    addButton.textContent = "Add";
+    addButton.textContent = ADD_BUTTON_TEXT;
     buttonsContainer.appendChild(addButton);
 
     const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancel";
+    cancelButton.textContent = CANCEL_BUTTON_TEXT;
     buttonsContainer.appendChild(cancelButton);
 
     const inputGroup = document.createElement("div");
@@ -147,9 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
       addTaskButton.disabled = false;
     });
 
-      tasksContainer.appendChild(taskElement);
+    tasksContainer.appendChild(taskElement);
   });
-  ///////////////
 
   // Priorities Submenu
   const prioritiesToggle = document.getElementById("togglePriorities");
