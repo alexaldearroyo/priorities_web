@@ -1,3 +1,6 @@
+import { createTaskElement } from './taskManager.js';
+
+
 // Function to create the calendar header
 function createCalendarHeader(currentDate, calendarContainer, tasksContainer, allTasks) {
     const header = document.createElement('div');
@@ -25,6 +28,33 @@ function createCalendarHeader(currentDate, calendarContainer, tasksContainer, al
     header.appendChild(nextButton);
 
     return header;
+}
+
+// Esta función mostrará un modal con las tareas para una fecha específica
+function showModalWithTasks(tasks) {
+    // Crear contenedor del modal
+    const modal = document.createElement('div');
+    modal.classList.add('tasks-modal');
+
+    // Contenedor para las tareas
+    const tasksList = document.createElement('div');
+    modal.appendChild(tasksList);
+
+    // Para cada tarea, crea un elemento y agrégalo a la lista
+    tasks.forEach(task => {
+        const taskElement = createTaskElement(task); // Utilizando la función de taskManager.js
+        tasksList.appendChild(taskElement);
+    });
+
+    // Agrega una opción para cerrar el modal
+    const closeButton = document.createElement('button');
+    closeButton.textContent = "Cerrar";
+    closeButton.addEventListener('click', () => {
+        modal.remove();
+    });
+    modal.appendChild(closeButton);
+
+    document.body.appendChild(modal);
 }
 
 // Function to create a basic calendar view and highlight dates with tasks
@@ -55,6 +85,10 @@ export function displayCalendarWithTasks(tasksContainer, calendarContainer, allT
 
         if (tasksForThisDay.length > 0) {
             dateElement.classList.add("has-tasks");
+            dateElement.addEventListener('click', () => {
+                showModalWithTasks(tasksForThisDay);
+            });
+
         }
 
         calendarDatesContainer.appendChild(dateElement); // Agregamos cada elemento de fecha al contenedor de fechas.
