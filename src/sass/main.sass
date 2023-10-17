@@ -265,9 +265,10 @@ button
 // Calendar styles
 #calendarContainer
   display: flex
-  flex-direction: column // Ensure elements are in a column
-  align-items: center    // Center items
+  flex-direction: column
+  align-items: center
   gap: 10px
+  width: 100%
 
 .calendar-header
   display: flex
@@ -290,22 +291,46 @@ button
       background-color: transparent
       color: #666
 
+.weekdays-header
+  display: grid
+  grid-template-columns: repeat(7, 1fr)
+  gap: 10px
+  width: 100%
+
+  > div
+    display: flex
+    align-items: center
+    justify-content: center
+    margin: 0
+    padding: 0
+
 .calendar-dates-container
   display: grid
   grid-template-columns: repeat(7, 1fr)
   gap: 10px
   width: 100%
 
-
 .calendar-day
-  width: 40px
+  width: 100%
   height: 40px
   display: flex
   align-items: center
   justify-content: center
   border: 1px solid #ccc
+  margin: 0
+  padding: 0
 
   &.has-tasks
     background-color: #e74c3c
     color: #fff
     cursor: pointer
+
+  &.out-of-month
+    color: gray
+
+
+.close-modal-button
+  display: flex
+  align-items: center
+  justify-content: center
+  height: 30px

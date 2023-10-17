@@ -83,6 +83,7 @@ function showModalWithTasks(tasks) {
 
     // Agrega una opción para cerrar el modal
     const closeButton = document.createElement('button');
+    closeButton.classList.add('close-modal-button');
     closeButton.textContent = "Close";
     closeButton.addEventListener('click', () => {
         modal.remove();
@@ -91,6 +92,19 @@ function showModalWithTasks(tasks) {
 
     document.body.appendChild(modal);
 }
+
+function createWeekdaysHeader() {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const header = document.createElement('div');
+    header.classList.add('weekdays-header');
+    days.forEach(day => {
+        const dayElement = document.createElement('div');
+        dayElement.textContent = day;
+        header.appendChild(dayElement);
+    });
+    return header;
+}
+
 
 // Function to create a basic calendar view and highlight dates with tasks
 export function displayCalendarWithTasks(tasksContainer, calendarContainer, allTasks, displayDate = new Date()) {
@@ -101,6 +115,8 @@ export function displayCalendarWithTasks(tasksContainer, calendarContainer, allT
     const currentYear = displayDate.getFullYear();
 
     calendarContainer.appendChild(createCalendarHeader(displayDate, calendarContainer, tasksContainer, allTasks));
+
+    calendarContainer.appendChild(createWeekdaysHeader());
 
     const calendarDays = generateCalendarDays(currentYear, currentMonth);
     const calendarDatesContainer = document.createElement('div');
