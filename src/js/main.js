@@ -1,7 +1,7 @@
-// Import the SASS file
+// Import the main SASS styles
 import "../sass/main.sass";
 
-// Import functions and constants from the modularized files
+// Import functions and constants from modularized files
 import {
   saveTasksToLocalStorage,
   loadTasksFromLocalStorage
@@ -11,6 +11,9 @@ import {
   createTaskElement,
   removeTask
 } from './taskManager.js';
+
+
+import { displayCalendarWithTasks } from './calendarManager.js';
 
 import {
   PRIORITIES,
@@ -22,28 +25,36 @@ import {
   COMPLETE_BUTTON_TEXT
 } from './constants.js';
 
-// New Task Box
+// Wait for DOM to fully load before attaching event listeners
 document.addEventListener("DOMContentLoaded", () => {
-  const addTaskButton = document.getElementById("addTaskButton");
-  const tasksContainer = document.getElementById("tasks");
 
+  // Reference to the "Add Task" button
+  const addTaskButton = document.getElementById("addTaskButton");
+
+  // Reference to the main tasks container and add event listener to detect when a task is marked as complete
+  const tasksContainer = document.getElementById("tasks");
   tasksContainer.addEventListener("click", (event) => {
     if (event.target.classList.contains("complete-button")) {
       removeTask(event.target);
     }
   });
 
+  // Load existing tasks from local storage and display them
   const storedTasks = loadTasksFromLocalStorage();
   for (const taskData of storedTasks) {
     tasksContainer.appendChild(createTaskElement(taskData));
   }
 
+  // Event listener for the "Add Task" button
   addTaskButton.addEventListener("click", () => {
-    addTaskButton.disabled = true;
+    // Disable the "Add Task" button to prevent multiple task additions
+    addTaskButton.disabled = true; 
 
+    // Create new task input form elements
     const taskElement = document.createElement("div");
     taskElement.classList.add("new-task");
 
+    // Text input
     const textInput = document.createElement("input");
     textInput.type = "text";
     textInput.placeholder = TASK_INPUT_PLACEHOLDER;
@@ -52,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const actionContainer = document.createElement("div");
     actionContainer.classList.add("action-container");
 
+    // Priority select
     const priorityContainer = document.createElement("div");
     priorityContainer.classList.add("custom-container", "priority-container");
     const priorityLabel = document.createElement("label");
@@ -66,9 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     priorityContainer.appendChild(priorityLabel);
     priorityContainer.appendChild(prioritySelect);
 
+    // Date input
     const dateContainer = document.createElement("div");
     dateContainer.classList.add("custom-container", "date-container");
-
     const dateLabel = document.createElement("label");
     dateLabel.textContent = DATE_LABEL;
     const dateInput = document.createElement("input");
@@ -76,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dateContainer.appendChild(dateLabel);
     dateContainer.appendChild(dateInput);
 
+    // Buttons
     const buttonsContainer = document.createElement("div");
     buttonsContainer.classList.add("buttons-container");
 
@@ -87,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cancelButton.textContent = CANCEL_BUTTON_TEXT;
     buttonsContainer.appendChild(cancelButton);
 
+    // Add the input elements to the task element
     const inputGroup = document.createElement("div");
     inputGroup.classList.add("input-group");
     inputGroup.appendChild(textInput);
@@ -98,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     taskElement.appendChild(actionContainer);
 
+    // Event listeners for adding and cancelling the creation of new tasks
     addButton.addEventListener("click", () => {
       if (textInput.value) {
         const taskTimestamp = Date.now();
@@ -109,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         tasksContainer.appendChild(createTaskElement(taskData));
 
-        // Agregar la tarea al localStorage
+        // Add task data to local storage
         const tasks = loadTasksFromLocalStorage();
         tasks.push(taskData);
         saveTasksToLocalStorage(tasks);
@@ -119,11 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // Handle task cancellation
     cancelButton.addEventListener("click", () => {
       taskElement.remove();
       addTaskButton.disabled = false;
     });
 
+    // Append new task element to tasks container
     tasksContainer.appendChild(taskElement);
   });
 
@@ -137,6 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
   tasksLabel.addEventListener("click", displayAllTasks);
 
   function displayAllTasks() {
+    addTaskButton.style.display = 'flex'; // Shows "add task" button
+
     const allTasks = loadTasksFromLocalStorage();
     const tasksContainer = document.getElementById("tasks");
     tasksContainer.innerHTML = ''; // Clear the current tasks
@@ -152,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
-  // Filter tasks by priority
+  // Filter tasks by selected priority from the sidebar menu
   subMenu.addEventListener("click", (event) => {
     if (event.target.tagName === "LI") {
         const selectedPriority = event.target.textContent;
@@ -160,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Function to display tasks based on their priority
   function filterTasksByPriority(priority) {
       const allTasks = loadTasksFromLocalStorage();
       const filteredTasks = allTasks.filter(task => task.priority === priority);
@@ -168,9 +188,40 @@ document.addEventListener("DOMContentLoaded", () => {
       for (const taskData of filteredTasks) {
           tasksContainer.appendChild(createTaskElement(taskData));
       }
+
+       const addTaskButton = document.getElementById("addTaskButton");
+      addTaskButton.style.display = 'none'; // Oculta el botón "Add task"
   }
 
-  // Sidebar toggle
+  // Display tasks on a calendar view when "Dates" menu item is clicked
+  const datesLabel = document.querySelector("aside ul li:nth-child(4)");
+
+  // Event listener for "Dates" menu item
+  datesLabel.addEventListener("click", displayCalendarWithTasks);
+
+  // Function to create a basic calendar view and highlight dates with tasks
+  datesLabel.addEventListener("click", () => {
+    const allTasks = loadTasksFromLocalStorage();
+    const tasksContainer = document.getElementById("tasks");
+    const calendarContainer = document.getElementById("calendarContainer");
+    displayCalendarWithTasks(tasksContainer, calendarContainer, allTasks);
+  });
+
+  // Get all sidebar items and add an event listener to hide calendar when any item other than "Dates" is clicked
+  const sidebarItems = document.querySelectorAll("aside ul li");
+
+  // Add a listener to each item
+  sidebarItems.forEach(item => {
+        item.addEventListener("click", (event) => {
+          // If the clicked element is not "Dates", hide the calendar
+          if (event.target.textContent !== "Dates") {
+            const calendarContainer = document.getElementById("calendarContainer");
+            calendarContainer.innerHTML = ''; // Clear the calendar container
+          }
+        });
+  });
+
+  // Sidebar toggle functionality for mobile or smaller screens
   const toggleSidebarButton = document.getElementById("toggleSidebar");
   const sidebar = document.querySelector("aside");
 

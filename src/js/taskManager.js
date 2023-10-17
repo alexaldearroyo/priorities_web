@@ -20,21 +20,18 @@ export function createTaskElement(taskData) {
 
     const priorityContainer = document.createElement('div');
     priorityContainer.classList.add('custom-container', 'priority-container');
-    const priorityLabel = document.createElement('label');
-    priorityLabel.textContent = "Priority:";
     const prioritySpan = document.createElement('span');
     prioritySpan.textContent = taskData.priority;
-    // priorityContainer.appendChild(priorityLabel);
     priorityContainer.appendChild(prioritySpan);
 
-    const dateContainer = document.createElement('div');
-    dateContainer.classList.add('custom-container', 'date-container');
-    const dateLabel = document.createElement('label');
-    dateLabel.textContent = "Date:";
-    const dateSpan = document.createElement('span');
-    dateSpan.textContent = taskData.date;
-    // dateContainer.appendChild(dateLabel);
-    dateContainer.appendChild(dateSpan);
+    if(taskData.date && taskData.date.trim() !== "") { // Comprobar si hay fecha y no está vacía
+        const dateContainer = document.createElement('div');
+        dateContainer.classList.add('custom-container', 'date-container');
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = taskData.date;
+        dateContainer.appendChild(dateSpan);
+        taskDetails.appendChild(dateContainer);
+    }
 
     const completeButton = document.createElement('button');
     completeButton.classList.add('complete-button');
@@ -44,7 +41,6 @@ export function createTaskElement(taskData) {
     });
 
     taskDetails.appendChild(priorityContainer);
-    taskDetails.appendChild(dateContainer);
     taskDetails.appendChild(completeButton);
 
     task.appendChild(taskDetails);

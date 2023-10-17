@@ -44,7 +44,7 @@ body
 aside.hidden
   display: none
 
-
+// Header styles
 #app-title
   font-family: 'Courier New', Courier, monospace
   font-size: 2em
@@ -57,6 +57,7 @@ aside.hidden
   margin: 40px auto
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1)
 
+  // Sidebar
   aside
     width: 250px
     background-color: $bg-color-aside
@@ -71,6 +72,7 @@ aside.hidden
       line-height: 1.5em
       cursor: pointer
 
+    // Projects Menu
     #togglePriorities
       cursor: pointer
       display: block
@@ -89,17 +91,22 @@ aside.hidden
     margin-left: 20px
     display: none
 
+  // Main content
   main
     flex: 1
     background-color: $color-inverse
     padding: 20px
 
-// Estilos comunes
+// Common style
 .custom-container
   background-color: blue
   padding: 5px 10px
   border-radius: 5px
   height: $common-height
+  display: flex
+  align-items: center
+  justify-content: center
+  
   label, span
     color: $color-inverse
     line-height: 20px
@@ -124,7 +131,6 @@ button
   transition: background-color 0.3s ease
   margin: 5px
   min-width: 100px
-  // make text size bigger
   font-size: 14px
   text-align: center
 
@@ -139,85 +145,8 @@ button
   align-items: center
   justify-content: center
 
-
-// Estilos específicos para tareas
-#tasks
-  > div
-    display: flex
-    flex-direction: column
-    background-color: $color-inverse
-    padding: 10px
-    padding-top: 20px
-    margin: 10px 0
-    border-radius: 5px
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
-
-    .task-details
-      display: flex
-      justify-content: space-between
-      align-items: center
-      gap: 10px
-      margin-top: 15px
-      margin-bottom: 20px
-
-      .custom-container, button
-        flex: 1
-        min-width: 100px
-        overflow: hidden
-
-    > div
-      display: flex
-      align-items: center
-      justify-content: space-between
-      width: 100%
-      // margin-bottom: 10px
-      gap: 10px
-      padding-left: 10px
-
-      .custom-container, button, input[type="text"], select, input[type="date"]
-        flex: 1
-
-      input[type="text"]
-        padding: 5px 10px
-        margin: 0 0 10px 0
-        border: 1px solid #ccc
-        border-radius: 3px
-
-      select, input[type="date"], button
-        box-sizing: border-box
-        margin-right: 5px
-        margin-left: 10px
-
-      div
-        display: flex
-        align-items: center
-        gap: 5px
-
-        label
-          margin-right: 5px
-
-        button
-          margin-right: 10px
-
-          &:last-child
-            margin-right: 0
-
-.task
-  background-color: #fff
-  border-radius: 5px
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
-  margin: 10px 0
-  padding: 20px
-  .task-text
-    font-size: 16px
-    font-weight: bold
-    // margin-bottom: 10px
-
-  .task-details
-    align-items: center
-    display: flex
-    justify-content: space-between
-
+// Saved Tasks Styles
+.task, .new-task
   .custom-container
     align-items: center
     display: flex
@@ -229,6 +158,33 @@ button
     span
       font-size: 14px
 
+
+.task
+  background-color: #fff
+  border-radius: 5px
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+  margin: 10px 0
+  padding: 20px
+
+  .task-text
+    font-size: 16px
+    font-weight: bold
+    margin-bottom: 10px
+
+  .task-details
+    align-items: center
+    display: flex
+    justify-content: space-between
+
+    > *
+      flex: 1
+
+  .priority-container
+    order: 1
+  
+  .date-container
+    order: 2
+
   .complete-button
     background-color: #e74c3c
     border: none
@@ -237,10 +193,13 @@ button
     cursor: pointer
     padding: 5px 10px
     transition: background-color 0.3s ease
+    order: 3
 
     &:hover
       background-color: darken(#e74c3c, 10%)
 
+
+// New Task Styles
 .new-task
   background-color: #fff
   border-radius: 5px
@@ -263,17 +222,6 @@ button
     width: 100%
 
   .custom-container
-    align-items: center
-    display: flex
-    margin-right: 10px
-
-    label
-      margin-right: 5px
-
-    span
-      font-size: 14px
-
-  .buttons-container
     flex: 1
 
   button
@@ -281,3 +229,50 @@ button
 
   .priority-container, .date-container
     flex: 1
+
+// Calendar styles
+#calendarContainer
+  display: flex
+  flex-direction: column // Ensure elements are in a column
+  align-items: center    // Center items
+  gap: 10px
+
+.calendar-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 5px 10px
+  font-weight: bold
+
+  button
+    background-color: transparent
+    color: #000
+    border: none
+    transition: none
+    align-items: center
+    padding: 0
+    margin: 0
+    cursor: pointer
+
+    &:hover, &:focus
+      background-color: transparent
+      color: #666
+
+.calendar-dates-container
+  display: grid
+  grid-template-columns: repeat(7, 1fr)
+  gap: 10px
+  width: 100%
+
+
+.calendar-day
+  width: 40px
+  height: 40px
+  display: flex
+  align-items: center
+  justify-content: center
+  border: 1px solid #ccc
+
+  &.has-tasks
+    background-color: #e74c3c
+    color: #fff
