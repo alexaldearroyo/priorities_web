@@ -210,13 +210,26 @@ button
     align-items: center
     z-index: 1000 // para asegurarse de que se muestre por encima de otros elementos
 
+    .close-button
+      display: flex
+      justify-content: center
+      align-items: center
+
 .tasks-modal > div
-    background-color: white
-    padding: 20px
-    border-radius: 5px
-    width: 70%
-    max-width: 500px
-    overflow-y: auto // para que se pueda desplazar si hay muchas tareas
+  background-color: white
+  padding: 20px
+  border-radius: 5px
+  width: 70%
+  max-width: 500px
+  overflow-y: auto // para que se pueda desplazar si hay muchas tareas
+  margin-bottom: 20px
+
+  
+
+.tasks-modal-container  // Añade el nuevo estilo aquí
+    display: flex
+    flex-direction: column      
+
 
 // New Task Styles
 .new-task
@@ -295,3 +308,4 @@ button
   &.has-tasks
     background-color: #e74c3c
     color: #fff
+    cursor: pointer

@@ -1,5 +1,40 @@
 import { createTaskElement } from './taskManager.js';
 
+function getFirstDayOfMonth(year, month) {
+    let day = new Date(year, month, 1).getDay();
+    return day === 0 ? 6 : day - 1; // 0 para lunes, 6 para domingo
+}
+
+function getLastDayOfMonth(year, month) {
+    let day = new Date(year, month + 1, 0).getDay();
+    return day === 0 ? 6 : day - 1; // 0 para lunes, 6 para domingo
+}
+
+function generateCalendarDays(year, month) {
+    const firstDay = getFirstDayOfMonth(year, month);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysArray = [];
+
+    // Días del mes anterior
+    for (let i = 0; i < firstDay; i++) {
+        const day = new Date(year, month, i - firstDay + 1).getDate();
+        daysArray.push({ day, outOfCurrentMonth: true });
+    }
+
+    // Días del mes actual
+    for (let i = 1; i <= daysInMonth; i++) {
+        daysArray.push({ day: i });
+    }
+
+    // Días del próximo mes
+    const lastDay = getLastDayOfMonth(year, month);
+    for (let i = lastDay + 1; i < 7; i++) {
+        const day = new Date(year, month + 1, i - lastDay).getDate();
+        daysArray.push({ day, outOfCurrentMonth: true });
+    }
+
+    return daysArray;
+}
 
 // Function to create the calendar header
 function createCalendarHeader(currentDate, calendarContainer, tasksContainer, allTasks) {
@@ -34,7 +69,7 @@ function createCalendarHeader(currentDate, calendarContainer, tasksContainer, al
 function showModalWithTasks(tasks) {
     // Crear contenedor del modal
     const modal = document.createElement('div');
-    modal.classList.add('tasks-modal');
+    modal.classList.add('tasks-modal', 'tasks-modal-container');  // Modificación aquí
 
     // Contenedor para las tareas
     const tasksList = document.createElement('div');
@@ -48,7 +83,7 @@ function showModalWithTasks(tasks) {
 
     // Agrega una opción para cerrar el modal
     const closeButton = document.createElement('button');
-    closeButton.textContent = "Cerrar";
+    closeButton.textContent = "Close";
     closeButton.addEventListener('click', () => {
         modal.remove();
     });
@@ -64,39 +99,40 @@ export function displayCalendarWithTasks(tasksContainer, calendarContainer, allT
 
     const currentMonth = displayDate.getMonth();
     const currentYear = displayDate.getFullYear();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
     calendarContainer.appendChild(createCalendarHeader(displayDate, calendarContainer, tasksContainer, allTasks));
 
-    // ... (parte inicial del código sigue igual)
-
+    const calendarDays = generateCalendarDays(currentYear, currentMonth);
     const calendarDatesContainer = document.createElement('div');
     calendarDatesContainer.classList.add('calendar-dates-container');
 
-    for (let day = 1; day <= daysInMonth; day++) {
+    calendarDays.forEach(({ day, outOfCurrentMonth }) => {
         const dateElement = document.createElement("div");
         dateElement.classList.add("calendar-day");
+        if (outOfCurrentMonth) {
+            dateElement.classList.add("out-of-month");
+        }
         dateElement.textContent = day;
 
-        const tasksForThisDay = allTasks.filter(task => {
-            const taskDate = new Date(task.date);
-            return taskDate.getDate() === day && taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
-        });
-
-        if (tasksForThisDay.length > 0) {
-            dateElement.classList.add("has-tasks");
-            dateElement.addEventListener('click', () => {
-                showModalWithTasks(tasksForThisDay);
+        if (!outOfCurrentMonth) { // Sólo verificar tareas si el día es del mes actual
+            const tasksForThisDay = allTasks.filter(task => {
+                const taskDate = new Date(task.date);
+                return taskDate.getDate() === day && taskDate.getMonth() === currentMonth && taskDate.getFullYear() === currentYear;
             });
 
+            if (tasksForThisDay.length > 0) {
+                dateElement.classList.add("has-tasks");
+                dateElement.addEventListener('click', () => {
+                    showModalWithTasks(tasksForThisDay);
+                });
+            }
         }
 
-        calendarDatesContainer.appendChild(dateElement); // Agregamos cada elemento de fecha al contenedor de fechas.
-    }
+        calendarDatesContainer.appendChild(dateElement);
+    });
 
-    calendarContainer.appendChild(calendarDatesContainer); // Agregamos el contenedor de fechas al contenedor del calendario después de finalizar el bucle.
+    calendarContainer.appendChild(calendarDatesContainer);
 
     const addTaskButton = document.getElementById("addTaskButton");
     addTaskButton.style.display = 'none'; // Hide the "Add task" button
-
 }
