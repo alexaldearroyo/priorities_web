@@ -4,16 +4,12 @@ import "../sass/main.sass";
 // Import functions and constants from modularized files
 import {
   saveTasksToLocalStorage,
-  loadTasksFromLocalStorage
-} from './localStorageManager.js';
+  loadTasksFromLocalStorage,
+} from "./localStorageManager.js";
 
-import {
-  createTaskElement,
-  removeTask
-} from './taskManager.js';
+import { createTaskElement, removeTask } from "./taskManager.js";
 
-
-import { displayCalendarWithTasks } from './calendarManager.js';
+import { displayCalendarWithTasks } from "./calendarManager.js";
 
 import {
   PRIORITIES,
@@ -22,12 +18,11 @@ import {
   DATE_LABEL,
   ADD_BUTTON_TEXT,
   CANCEL_BUTTON_TEXT,
-  COMPLETE_BUTTON_TEXT
-} from './constants.js';
+  COMPLETE_BUTTON_TEXT,
+} from "./constants.js";
 
 // Wait for DOM to fully load before attaching event listeners
 document.addEventListener("DOMContentLoaded", () => {
-
   // Reference to the "Add Task" button
   const addTaskButton = document.getElementById("addTaskButton");
 
@@ -48,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for the "Add Task" button
   addTaskButton.addEventListener("click", () => {
     // Disable the "Add Task" button to prevent multiple task additions
-    addTaskButton.disabled = true; 
+    addTaskButton.disabled = true;
 
     // Create new task input form elements
     const taskElement = document.createElement("div");
@@ -120,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
           timestamp: taskTimestamp,
           text: textInput.value,
           priority: prioritySelect.value,
-          date: dateInput.value
+          date: dateInput.value,
         };
         tasksContainer.appendChild(createTaskElement(taskData));
 
@@ -154,14 +149,19 @@ document.addEventListener("DOMContentLoaded", () => {
   tasksLabel.addEventListener("click", displayAllTasks);
 
   function displayAllTasks() {
-    addTaskButton.style.display = 'flex'; // Shows "add task" button
+    
+    addTaskButton.style.display = "flex"; // Shows "add task" button
 
     const allTasks = loadTasksFromLocalStorage();
     const tasksContainer = document.getElementById("tasks");
-    tasksContainer.innerHTML = ''; // Clear the current tasks
+    tasksContainer.innerHTML = ""; // Clear the current tasks
     for (const taskData of allTasks) {
-        tasksContainer.appendChild(createTaskElement(taskData));
+      tasksContainer.appendChild(createTaskElement(taskData));
     }
+
+    // Asegurarse de que el contenedor de tareas se muestre nuevamente
+    tasksContainer.style.display = "block";
+
   }
 
   prioritiesToggle.addEventListener("click", () => {
@@ -170,28 +170,48 @@ document.addEventListener("DOMContentLoaded", () => {
     parentLi.classList.toggle("sub-menu-opened", !isSubMenuVisible);
   });
 
-
   // Filter tasks by selected priority from the sidebar menu
   subMenu.addEventListener("click", (event) => {
     if (event.target.tagName === "LI") {
-        const selectedPriority = event.target.textContent;
-        filterTasksByPriority(selectedPriority);
+      const selectedPriority = event.target.textContent;
+      filterTasksByPriority(selectedPriority);
     }
   });
 
   // Function to display tasks based on their priority
   function filterTasksByPriority(priority) {
-      const allTasks = loadTasksFromLocalStorage();
-      const filteredTasks = allTasks.filter(task => task.priority === priority);
-      const tasksContainer = document.getElementById("tasks");
-      tasksContainer.innerHTML = ''; // Clear the current tasks
-      for (const taskData of filteredTasks) {
-          tasksContainer.appendChild(createTaskElement(taskData));
-      }
+    const allTasks = loadTasksFromLocalStorage();
+    const filteredTasks = allTasks.filter((task) => task.priority === priority);
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.innerHTML = ""; // Clear the current tasks
+    for (const taskData of filteredTasks) {
+      tasksContainer.appendChild(createTaskElement(taskData));
+    }
 
-       const addTaskButton = document.getElementById("addTaskButton");
-      addTaskButton.style.display = 'none'; // Oculta el botón "Add task"
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.style.display = "none"; // Oculta el botón "Add task"
   }
+
+  // Agrega un evento para el elemento "Projects" en la barra lateral
+  const projectsLabel = document.querySelector("#projectsMenuItem");
+  const createProjectContainer = document.getElementById(
+    "createProjectContainer"
+  );
+
+
+  projectsLabel.addEventListener("click", () => {
+    // Oculta el botón "Add Task" u otros elementos relevantes
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.style.display = "none";
+
+    // Muestra el botón "Create Project"
+    createProjectContainer.style.display = "block";
+
+    // Oculta el cuadro de tareas
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.style.display = "none";
+});
+
 
   // Display tasks on a calendar view when "Dates" menu item is clicked
   const datesLabel = document.querySelector("aside ul li:nth-child(4)");
@@ -211,14 +231,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebarItems = document.querySelectorAll("aside ul li");
 
   // Add a listener to each item
-  sidebarItems.forEach(item => {
-        item.addEventListener("click", (event) => {
-          // If the clicked element is not "Dates", hide the calendar
-          if (event.target.textContent !== "Dates") {
-            const calendarContainer = document.getElementById("calendarContainer");
-            calendarContainer.innerHTML = ''; // Clear the calendar container
-          }
-        });
+  sidebarItems.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      // If the clicked element is not "Dates", hide the calendar
+      if (event.target.textContent !== "Dates") {
+        const calendarContainer = document.getElementById("calendarContainer");
+        calendarContainer.innerHTML = ""; // Clear the calendar container
+      }
+      if (event.target.textContent !== "Projects") {
+        createProjectContainer.style.display = "none";
+      }
+    });
   });
 
   // Sidebar toggle functionality for mobile or smaller screens
@@ -226,6 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.querySelector("aside");
 
   toggleSidebarButton.addEventListener("click", () => {
-      sidebar.classList.toggle("hidden");
+    sidebar.classList.toggle("hidden");
   });
 });
