@@ -91,14 +91,19 @@ function toggleProjectInput(createProjectButton, createProjectContainer) {
     addButton.textContent = "Add";
 
     addButton.addEventListener("click", () => {
-        const projectName = projectInput.value;
-
+        const projectName = projectInput.value.trim();
+    
+        if (!projectName) {  // Comprobar si el nombre del proyecto está vacío
+            alert('Please, enter a project title.');
+            return;
+        }
+    
         // Guardar el proyecto en localStorage
         addProjectToLocalStorage(projectName);
-
+    
         // Mostrar el proyecto en la interfaz
         displayProject(projectName, createProjectContainer);
-
+    
         projectInput.value = "";
         inputAndButtonsContainer.remove();
         isInputShown = false;
