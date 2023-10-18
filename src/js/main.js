@@ -1,3 +1,4 @@
+
 // Import the main SASS styles
 import "../sass/main.sass";
 
@@ -10,9 +11,10 @@ import {
 import { createTaskElement, removeTask } from "./taskManager.js";
 
 import {
-  saveProjectToLocalStorage,
-  displaySavedProjects,
-} from "./projectManager.js";
+  displayProject,
+  setupCreateProjectButton,
+  loadAndDisplaySavedProjects,
+} from "./projectManager";
 
 import { displayCalendarWithTasks } from "./calendarManager.js";
 
@@ -30,6 +32,10 @@ import {
 document.addEventListener("DOMContentLoaded", () => {
   // Reference to the "Add Task" button
   const addTaskButton = document.getElementById("addTaskButton");
+  const createProjectButton = document.getElementById("createProjectButton"); // Moved this line up for reference
+
+  // Initially hide the "Create Project" button
+  createProjectButton.style.display = "none";
 
   // Reference to the main tasks container and add event listener to detect when a task is marked as complete
   const tasksContainer = document.getElementById("tasks");
@@ -37,64 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.classList.contains("complete-button")) {
       removeTask(event.target);
     }
+
+    const createProjectButton = document.getElementById("createProjectButton");
+    const createProjectContainer = document.getElementById(
+      "createProjectContainer"
+    );
+
+    loadAndDisplaySavedProjects(createProjectContainer);
+    setupCreateProjectButton(createProjectButton, createProjectContainer);
   });
-
-  const createProjectButton = document.getElementById("createProjectButton");
-
-  createProjectButton.addEventListener("click", () => {
-    // Hide the "Create Project" button
-    createProjectButton.style.display = "block";
-
-    projectInputContainer.style.display = "block";
-
-    // Create project input elements
-    const projectInput = document.createElement("input");
-    projectInput.type = "text";
-    projectInput.placeholder = "Project Name";
-
-    // Create "Add" button
-    const addButton = document.createElement("button");
-    addButton.textContent = "Add";
-    addButton.addEventListener("click", () => {
-      const projectName = projectInput.value.trim();
-      if (projectName !== "") {
-        saveProjectToLocalStorage(projectName);
-        displaySavedProjects(createProjectContainer);
-        // Clear and hide the project input and buttons
-        projectInput.value = "";
-        createProjectActions.style.display = "none"; // Oculta el contenedor de botones
-        // Show the "Create Project" button again
-        createProjectButton.style.display = "block";
-      }
-    });
-
-    // Create "Cancel" button
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancel";
-    cancelButton.addEventListener("click", () => {
-      // Clear and hide the project input and buttons
-      projectInput.value = "";
-      createProjectActions.style.display = "none"; // Oculta el contenedor de botones
-      // Show the "Create Project" button again
-      createProjectButton.style.display = "block";
-    });
-
-    // Create a container for "Add" and "Cancel" buttons
-    const createProjectActions = document.createElement("div");
-    createProjectActions.appendChild(addButton);
-    createProjectActions.appendChild(cancelButton);
-
-    // Append the input and buttons to the project container
-    createProjectContainer.appendChild(projectInput);
-    createProjectContainer.appendChild(createProjectActions);
-
-    // Display the project input and buttons
-    projectInput.style.display = "block";
-    createProjectActions.style.display = "flex"; // Muestra el contenedor de botones
-    projectInput.focus(); // Enfoca el proyecto de entrada para escribir inmediatamente
-  });
-
-  /////
 
   // Load existing tasks from local storage and display them
   const storedTasks = loadTasksFromLocalStorage();
@@ -259,14 +216,14 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   createProjectContainer.classList.add("project-container");
 
-
   projectsLabel.addEventListener("click", () => {
     // Oculta el botón "Add Task" u otros elementos relevantes
-    const addTaskButton = document.getElementById("addTaskButton");
-    addTaskButton.style.display = "none";
+    if (addTaskButton) {
+      addTaskButton.style.display = "none";
+    }
 
     // Muestra el botón "Create Project"
-    createProjectContainer.style.display = "flex";
+    createProjectContainer.style.display = "block";
 
     // Oculta el cuadro de tareas
     const tasksContainer = document.getElementById("tasks");
@@ -293,6 +250,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add a listener to each item
   sidebarItems.forEach((item) => {
     item.addEventListener("click", (event) => {
+      // If the clicked element is not "Projects", hide the "Create Project" button
+      if (event.target.textContent !== "Projects") {
+        createProjectButton.style.display = "none";
+      }
       // If the clicked element is not "Dates", hide the calendar
       if (event.target.textContent !== "Dates") {
         const calendarContainer = document.getElementById("calendarContainer");

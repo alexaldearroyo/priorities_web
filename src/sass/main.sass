@@ -231,7 +231,6 @@ button
   overflow-y: auto // para que se pueda desplazar si hay muchas tareas
   margin-bottom: 20px
 
-  
 
 .tasks-modal-container  // Añade el nuevo estilo aquí
     display: flex
@@ -346,9 +345,12 @@ button
   height: 30px
 
 
+// Projects Styles
+
 #createProjectContainer
   display: flex // Para que los elementos se muestren en línea
   align-items: center // Para centrar verticalmente los elementos
+  flex-direction: column
 
 #createProjectContainer input[type="text"]
   flex: 1 // El input ocupará todo el espacio disponible
@@ -377,11 +379,42 @@ button
   justify-content: center
   margin-bottom: 10px
 
+.input-and-buttons-container
+  display: flex
+  align-items: center
+
 .project-container
-  display: flex       // Establece el contenedor como flexbox
-  flex-wrap: nowrap    // Evita que los elementos se envuelvan
-  align-items: center  // Opcional: alinea los elementos verticalmente en el centro
+  display: grid
+  grid-template-columns: 1fr   // Cada proyecto toma el mismo espacio
+  gap: 10px
 
-.project-container > *
-  margin-right: 10px   // Opcional: agrega un margen entre los elementos
+#createProjectButton
+  margin-bottom: 20px
 
+.project-item
+  background-color: white
+  padding: 10px 20px
+  border-radius: 10px
+  display: flex
+  flex-direction: row  // Alinea los elementos en una fila
+  align-items: center
+  width: 100%
+  min-width: 300px
+  margin: 10px 0
+  // haz que los elementos de dentro tengan un espacio de manera que los botonos (button) vayan a la derecha del todo
+  justify-content: space-between
+
+  .text-container
+    flex: 1             // El contenedor de texto ocupa el espacio restante
+    white-space: nowrap // Evita que el texto se desborde
+
+  .buttons-container
+    display: flex
+    align-items: center
+    justify-content: flex-end  // Alinea los botones a la derecha
+
+    button
+      min-width: 60px
+
+    button:not(:first-child)  // Aplica estilo a todos los botones excepto el primero (Delete)
+      margin-left: 5px  // Establece un pequeño margen entre ellos

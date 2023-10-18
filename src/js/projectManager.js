@@ -1,43 +1,125 @@
-export function displayProjectInput(createProjectContainer) {
-    // Verifica si ya hay un recuadro de entrada. Si es así, no hagas nada.
-    if (document.getElementById("projectNameInput")) {
-        return;
-    }
+// projectManager.js
 
-    // Crea el recuadro de entrada para el nombre del proyecto
-    const projectInput = document.createElement('input');
-    projectInput.id = 'projectNameInput';
-    projectInput.type = 'text';
-    projectInput.placeholder = 'Nombre del proyecto';
-    
-    // Añade un evento "Enter" al recuadro de entrada
-    projectInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter' && projectInput.value.trim() !== '') {
-            saveProjectToLocalStorage(projectInput.value.trim());
-            displaySavedProjects(createProjectContainer);
-            projectInput.remove(); // Elimina el recuadro de entrada después de guardar el proyecto
+import {
+    addProjectToLocalStorage,
+    loadProjectsFromLocalStorage,
+    removeProjectFromLocalStorage
+} from "./localStorageManager";
+
+// Helper Functions
+function createProjectElement(projectName) {
+    const projectElement = document.createElement("div");
+    projectElement.className = "project-item";
+
+    const projectNameElement = document.createElement("span");
+    projectNameElement.textContent = projectName;
+
+    const buttonsContainer = createProjectButtonsContainer(projectName, projectElement);
+
+    projectElement.appendChild(projectNameElement);
+    projectElement.appendChild(buttonsContainer);
+
+    return projectElement;
+}
+
+function createProjectButtonsContainer(projectName, projectElement) {
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.className = "buttons-container";
+
+    const viewButton = document.createElement("button");
+    viewButton.textContent = "View";
+    viewButton.addEventListener("click", () => {
+        // Funcionalidad para ver el proyecto
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.id = `deleteProjectButton_${projectName}`;
+    deleteButton.addEventListener("click", () => {
+        projectElement.remove();
+        removeProjectFromLocalStorage(projectName);
+    });
+
+    buttonsContainer.appendChild(viewButton);
+    buttonsContainer.appendChild(deleteButton);
+    return buttonsContainer;
+}
+
+// Main Functions
+export function displayProject(projectName, createProjectContainer) {
+    const projectElement = createProjectElement(projectName);
+    createProjectContainer.appendChild(projectElement);
+}
+
+export function loadAndDisplaySavedProjects(createProjectContainer) {
+    const savedProjects = loadProjectsFromLocalStorage();
+    savedProjects.forEach(projectName => {
+        displayProject(projectName, createProjectContainer);
+    });
+}
+
+export function setupCreateProjectButton(createProjectButton, createProjectContainer) {
+    createProjectButton.addEventListener("click", () => {
+        toggleProjectInput(createProjectButton, createProjectContainer);
+    });
+
+    // Setting up the event listener for the "Projects" label here to ensure it's only set once.
+    const projectsLabel = document.querySelector("#projectsMenuItem");
+    projectsLabel.addEventListener("click", () => {
+        const addTaskButton = document.getElementById("addTaskButton");
+        if (addTaskButton) {
+            addTaskButton.style.display = "none";
         }
-    });
 
-    createProjectContainer.appendChild(projectInput);
-    projectInput.focus(); // Enfoca el recuadro de entrada para que el usuario pueda empezar a escribir inmediatamente
+        createProjectContainer.style.display = "flex";
+        const tasksContainer = document.getElementById("tasks");
+        tasksContainer.style.display = "none";
+    });
 }
 
-export function saveProjectToLocalStorage(projectName) {
-    let projects = JSON.parse(localStorage.getItem('projects')) || [];
-    if (!projects.includes(projectName)) {
-        projects.push(projectName);
-        localStorage.setItem('projects', JSON.stringify(projects));
-    }
-}
+function toggleProjectInput(createProjectButton, createProjectContainer) {
+    let isInputShown = false;
 
-export function displaySavedProjects(container) {
-    const projects = JSON.parse(localStorage.getItem('projects')) || [];
-    container.innerHTML = ''; // Limpiar el contenedor
+    if (isInputShown) return;
 
-    projects.forEach(projectName => {
-        const projectElement = document.createElement('div');
-        projectElement.textContent = projectName;
-        container.appendChild(projectElement);
+    const projectInput = document.createElement("input");
+    projectInput.type = "text";
+    projectInput.placeholder = "Project Name";
+
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add";
+    addButton.addEventListener("click", () => {
+        const projectName = projectInput.value;
+
+        // Guardar el proyecto en localStorage
+        addProjectToLocalStorage(projectName);
+
+        // Mostrar el proyecto en la interfaz
+        displayProject(projectName, createProjectContainer);
+
+        projectInput.value = "";
+        inputAndButtonsContainer.remove();
+        isInputShown = false;
     });
+
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancel";
+    cancelButton.addEventListener("click", () => {
+        inputAndButtonsContainer.remove();
+        isInputShown = false;
+    });
+
+    const createProjectActions = document.createElement("div");
+    createProjectActions.appendChild(addButton);
+    createProjectActions.appendChild(cancelButton);
+
+    const inputAndButtonsContainer = document.createElement("div");
+    inputAndButtonsContainer.className = "input-and-buttons-container";
+    inputAndButtonsContainer.appendChild(projectInput);
+    inputAndButtonsContainer.appendChild(createProjectActions);
+
+    createProjectButton.insertAdjacentElement('afterend', inputAndButtonsContainer);
+    projectInput.style.display = "block";
+    createProjectActions.style.display = "flex";
+    projectInput.focus();
 }
