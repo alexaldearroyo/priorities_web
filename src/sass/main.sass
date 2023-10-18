@@ -248,12 +248,14 @@ button
 
   .input-group
     margin-bottom: 10px
+    display: flex 
 
   .task-input
     font-size: 14px
     height: 40px
     width: 100%
     padding: 0 10px
+    flex: 1
 
   .action-container
     align-items: center
@@ -342,3 +344,44 @@ button
   align-items: center
   justify-content: center
   height: 30px
+
+
+#createProjectContainer
+  display: flex // Para que los elementos se muestren en línea
+  align-items: center // Para centrar verticalmente los elementos
+
+#createProjectContainer input[type="text"]
+  flex: 1 // El input ocupará todo el espacio disponible
+  margin-right: 10px // Espacio entre el input y los botones
+  height: $common-height
+  padding: 0 10px
+
+#createProjectContainer button
+  background-color: $bg-color-button
+  color: $color-inverse
+  padding: 10px 20px
+  border: none
+  border-radius: 5px
+  cursor: pointer
+  transition: background-color 0.3s ease
+  font-size: 14px
+  text-align: center
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
+
+#projectInputContainer
+  display: flex
+  align-items: center
+  justify-content: center
+  margin-bottom: 10px
+
+.project-container
+  display: flex       // Establece el contenedor como flexbox
+  flex-wrap: nowrap    // Evita que los elementos se envuelvan
+  align-items: center  // Opcional: alinea los elementos verticalmente en el centro
+
+.project-container > *
+  margin-right: 10px   // Opcional: agrega un margen entre los elementos
+

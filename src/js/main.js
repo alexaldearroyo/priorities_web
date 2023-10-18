@@ -9,7 +9,10 @@ import {
 
 import { createTaskElement, removeTask } from "./taskManager.js";
 
-import { saveProjectToLocalStorage, displaySavedProjects } from "./projectManager.js";
+import {
+  saveProjectToLocalStorage,
+  displaySavedProjects,
+} from "./projectManager.js";
 
 import { displayCalendarWithTasks } from "./calendarManager.js";
 
@@ -37,9 +40,61 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const createProjectButton = document.getElementById("createProjectButton");
+
   createProjectButton.addEventListener("click", () => {
-      displayProjectInput(createProjectContainer);
+    // Hide the "Create Project" button
+    createProjectButton.style.display = "block";
+
+    projectInputContainer.style.display = "block";
+
+    // Create project input elements
+    const projectInput = document.createElement("input");
+    projectInput.type = "text";
+    projectInput.placeholder = "Project Name";
+
+    // Create "Add" button
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add";
+    addButton.addEventListener("click", () => {
+      const projectName = projectInput.value.trim();
+      if (projectName !== "") {
+        saveProjectToLocalStorage(projectName);
+        displaySavedProjects(createProjectContainer);
+        // Clear and hide the project input and buttons
+        projectInput.value = "";
+        createProjectActions.style.display = "none"; // Oculta el contenedor de botones
+        // Show the "Create Project" button again
+        createProjectButton.style.display = "block";
+      }
+    });
+
+    // Create "Cancel" button
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancel";
+    cancelButton.addEventListener("click", () => {
+      // Clear and hide the project input and buttons
+      projectInput.value = "";
+      createProjectActions.style.display = "none"; // Oculta el contenedor de botones
+      // Show the "Create Project" button again
+      createProjectButton.style.display = "block";
+    });
+
+    // Create a container for "Add" and "Cancel" buttons
+    const createProjectActions = document.createElement("div");
+    createProjectActions.appendChild(addButton);
+    createProjectActions.appendChild(cancelButton);
+
+    // Append the input and buttons to the project container
+    createProjectContainer.appendChild(projectInput);
+    createProjectContainer.appendChild(createProjectActions);
+
+    // Display the project input and buttons
+    projectInput.style.display = "block";
+    createProjectActions.style.display = "flex"; // Muestra el contenedor de botones
+    projectInput.focus(); // Enfoca el proyecto de entrada para escribir inmediatamente
   });
+
+  /////
 
   // Load existing tasks from local storage and display them
   const storedTasks = loadTasksFromLocalStorage();
@@ -202,6 +257,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const createProjectContainer = document.getElementById(
     "createProjectContainer"
   );
+  createProjectContainer.classList.add("project-container");
+
 
   projectsLabel.addEventListener("click", () => {
     // Oculta el botón "Add Task" u otros elementos relevantes
@@ -209,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addTaskButton.style.display = "none";
 
     // Muestra el botón "Create Project"
-    createProjectContainer.style.display = "block";
+    createProjectContainer.style.display = "flex";
 
     // Oculta el cuadro de tareas
     const tasksContainer = document.getElementById("tasks");
