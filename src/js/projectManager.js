@@ -3,7 +3,7 @@
 import {
     addProjectToLocalStorage,
     loadProjectsFromLocalStorage,
-    removeProjectFromLocalStorage
+    removeProjectFromLocalStorage 
 } from "./localStorageManager";
 
 // Helper Functions
@@ -77,8 +77,9 @@ export function setupCreateProjectButton(createProjectButton, createProjectConta
     });
 }
 
+let isInputShown = false;
+
 function toggleProjectInput(createProjectButton, createProjectContainer) {
-    let isInputShown = false;
 
     if (isInputShown) return;
 
@@ -88,6 +89,7 @@ function toggleProjectInput(createProjectButton, createProjectContainer) {
 
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
+
     addButton.addEventListener("click", () => {
         const projectName = projectInput.value;
 
@@ -104,6 +106,7 @@ function toggleProjectInput(createProjectButton, createProjectContainer) {
 
     const cancelButton = document.createElement("button");
     cancelButton.textContent = "Cancel";
+
     cancelButton.addEventListener("click", () => {
         inputAndButtonsContainer.remove();
         isInputShown = false;
@@ -122,4 +125,7 @@ function toggleProjectInput(createProjectButton, createProjectContainer) {
     projectInput.style.display = "block";
     createProjectActions.style.display = "flex";
     projectInput.focus();
+
+    isInputShown = true; // Establecemos isInputShown como true cuando el formulario está visible
+
 }

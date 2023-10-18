@@ -28,6 +28,15 @@ import {
   COMPLETE_BUTTON_TEXT,
 } from "./constants.js";
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const createProjectButton = document.getElementById("createProjectButton");
+  const createProjectContainer = document.getElementById("createProjectContainer");
+
+  loadAndDisplaySavedProjects(createProjectContainer);
+  setupCreateProjectButton(createProjectButton, createProjectContainer);
+});
+
 // Wait for DOM to fully load before attaching event listeners
 document.addEventListener("DOMContentLoaded", () => {
   // Reference to the "Add Task" button
@@ -43,14 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.classList.contains("complete-button")) {
       removeTask(event.target);
     }
-
-    const createProjectButton = document.getElementById("createProjectButton");
-    const createProjectContainer = document.getElementById(
-      "createProjectContainer"
-    );
-
-    loadAndDisplaySavedProjects(createProjectContainer);
-    setupCreateProjectButton(createProjectButton, createProjectContainer);
   });
 
   // Load existing tasks from local storage and display them
