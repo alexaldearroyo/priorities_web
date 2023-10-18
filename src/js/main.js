@@ -9,6 +9,8 @@ import {
 
 import { createTaskElement, removeTask } from "./taskManager.js";
 
+import { saveProjectToLocalStorage, displaySavedProjects } from "./projectManager.js";
+
 import { displayCalendarWithTasks } from "./calendarManager.js";
 
 import {
@@ -32,6 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.classList.contains("complete-button")) {
       removeTask(event.target);
     }
+  });
+
+  const createProjectButton = document.getElementById("createProjectButton");
+  createProjectButton.addEventListener("click", () => {
+      displayProjectInput(createProjectContainer);
   });
 
   // Load existing tasks from local storage and display them
@@ -136,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Append new task element to tasks container
-    tasksContainer.appendChild(taskElement);
+    tasksContainer.prepend(taskElement);
   });
 
   // Priorities Submenu
@@ -149,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
   tasksLabel.addEventListener("click", displayAllTasks);
 
   function displayAllTasks() {
-    
     addTaskButton.style.display = "flex"; // Shows "add task" button
 
     const allTasks = loadTasksFromLocalStorage();
@@ -161,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Asegurarse de que el contenedor de tareas se muestre nuevamente
     tasksContainer.style.display = "block";
-
   }
 
   prioritiesToggle.addEventListener("click", () => {
@@ -198,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "createProjectContainer"
   );
 
-
   projectsLabel.addEventListener("click", () => {
     // Oculta el botón "Add Task" u otros elementos relevantes
     const addTaskButton = document.getElementById("addTaskButton");
@@ -210,8 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Oculta el cuadro de tareas
     const tasksContainer = document.getElementById("tasks");
     tasksContainer.style.display = "none";
-});
-
+  });
 
   // Display tasks on a calendar view when "Dates" menu item is clicked
   const datesLabel = document.querySelector("aside ul li:nth-child(4)");
