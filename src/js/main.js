@@ -192,8 +192,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.tagName === "LI") {
       const selectedPriority = event.target.textContent;
       filterTasksByPriority(selectedPriority);
+      
+      // Asegurarse de que el contenedor de tareas se muestre nuevamente
+      const tasksContainer = document.getElementById("tasks");
+      tasksContainer.style.display = "block";
+      
+      // Ocultar otros contenedores para mantener una vista limpia
+      const createProjectContainer = document.getElementById("createProjectContainer");
+      const calendarContainer = document.getElementById("calendarContainer");
+      createProjectContainer.style.display = "none";
+      calendarContainer.innerHTML = "";
     }
-  });
+});
+
 
   // Function to display tasks based on their priority
   function filterTasksByPriority(priority) {
@@ -217,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   createProjectContainer.classList.add("project-container");
 
   projectsLabel.addEventListener("click", () => {
+    console.log("Clicked on Projects"); // Añade esta línea
     // Oculta el botón "Add Task" u otros elementos relevantes
     if (addTaskButton) {
       addTaskButton.style.display = "none";
@@ -246,24 +258,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Get all sidebar items and add an event listener to hide calendar when any item other than "Dates" is clicked
   const sidebarItems = document.querySelectorAll("aside ul li");
-
-  // Add a listener to each item
   sidebarItems.forEach((item) => {
     item.addEventListener("click", (event) => {
-      // If the clicked element is not "Projects", hide the "Create Project" button
-      if (event.target.textContent !== "Projects") {
-        createProjectButton.style.display = "none";
-      }
-      // If the clicked element is not "Dates", hide the calendar
-      if (event.target.textContent !== "Dates") {
-        const calendarContainer = document.getElementById("calendarContainer");
-        calendarContainer.innerHTML = ""; // Clear the calendar container
-      }
-      if (event.target.textContent !== "Projects") {
-        createProjectContainer.style.display = "none";
+      const calendarContainer = document.getElementById("calendarContainer");
+  
+      switch (event.target.textContent) {
+        case "Projects":
+          createProjectButton.style.display = "block";
+          createProjectContainer.style.display = "block";
+          calendarContainer.innerHTML = ""; // Clear the calendar container
+          break;
+        case "Dates":
+          createProjectButton.style.display = "none";
+          createProjectContainer.style.display = "none";
+  
+          const allTasks = loadTasksFromLocalStorage();
+          const tasksContainer = document.getElementById("tasks");
+          displayCalendarWithTasks(tasksContainer, calendarContainer, allTasks);
+          break;
+        default:
+          createProjectButton.style.display = "none";
+          createProjectContainer.style.display = "none";
+          calendarContainer.innerHTML = ""; // Clear the calendar container
+          break;
       }
     });
   });
+  
+  
+
 
   // Sidebar toggle functionality for mobile or smaller screens
   const toggleSidebarButton = document.getElementById("toggleSidebar");
