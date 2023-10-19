@@ -206,26 +206,31 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   createProjectContainer.classList.add("project-container");
 
+  let projectsAreShown = false; // Variable para rastrear si los proyectos se muestran o no
+
   projectsLabel.addEventListener("click", () => {
-
-    if (createProjectContainer.style.display === "block") {
-      return;
+    // Verifica si los proyectos ya se están mostrando
+    if (!projectsAreShown) {
+      // Oculta el botón "Add Task" u otros elementos relevantes
+      const addTaskButton = document.getElementById("addTaskButton");
+      if (addTaskButton) {
+        addTaskButton.style.display = "none";
+      }
+  
+      // Muestra el botón "Create Project"
+      createProjectContainer.style.display = "block";
+  
+      loadAndDisplaySavedProjects(createProjectContainer);
+  
+      // Oculta el cuadro de tareas
+      const tasksContainer = document.getElementById("tasks");
+      tasksContainer.style.display = "none";
+  
+      // Marca que los proyectos se están mostrando
+      projectsAreShown = true;
     }
-
-    // Oculta el botón "Add Task" u otros elementos relevantes
-    if (addTaskButton) {
-      addTaskButton.style.display = "none";
-    }
-
-    // Muestra el botón "Create Project"
-    createProjectContainer.style.display = "block";
-
-    loadAndDisplaySavedProjects(createProjectContainer);
-
-    // Oculta el cuadro de tareas
-    const tasksContainer = document.getElementById("tasks");
-    tasksContainer.style.display = "none";
   });
+  
 
   // Display tasks on a calendar view when "Dates" menu item is clicked
   const datesLabel = document.querySelector("aside ul li:nth-child(4)");
