@@ -63,7 +63,7 @@ function setupTaskEnvironment() {
     tasksContainer.addEventListener("click", handleTaskCompletion);
 
     // Load and display existing tasks from local storage
-    loadAndDisplayTasks(tasksContainer);
+    // loadAndDisplayTasks(tasksContainer);
 
     // Add event listener for the "Add Task" button
     addTaskButton.addEventListener("click", handleAddTaskClick);
@@ -83,28 +83,28 @@ function loadAndDisplayTasks(tasksContainer) {
 }
 
 function handleAddTaskClick() {
- const addTaskButton = document.getElementById("addTaskButton");
+  const addTaskButton = document.getElementById("addTaskButton");
   const createProjectButton = document.getElementById("createProjectButton"); // Moved this line up for reference
 
   // Initially hide the "Create Project" button
   createProjectButton.style.display = "none";
 
-  // Reference to the main tasks container and add event listener to detect when a task is marked as complete
-  const tasksContainer = document.getElementById("tasks");
-  tasksContainer.addEventListener("click", (event) => {
-    if (event.target.classList.contains("complete-button")) {
-      removeTask(event.target);
-    }
-  });
+ // Reference to the main tasks container
+ const tasksContainer = document.getElementById("tasks");
+  // tasksContainer.addEventListener("click", (event) => {
+  //   if (event.target.classList.contains("complete-button")) {
+  //     removeTask(event.target);
+  //   }
+  // });
 
   // Load existing tasks from local storage and display them
-  const storedTasks = loadTasksFromLocalStorage();
-  for (const taskData of storedTasks) {
-    tasksContainer.appendChild(createTaskElement(taskData));
-  }
+  // const storedTasks = loadTasksFromLocalStorage();
+  // for (const taskData of storedTasks) {
+  //   tasksContainer.appendChild(createTaskElement(taskData));
+  // }
 
   // Event listener for the "Add Task" button
-  addTaskButton.addEventListener("click", () => {
+  // addTaskButton.addEventListener("click", () => {
     // Disable the "Add Task" button to prevent multiple task additions
     addTaskButton.disabled = true;
 
@@ -200,7 +200,6 @@ function handleAddTaskClick() {
 
     // Append new task element to tasks container
     tasksContainer.prepend(taskElement);
-  });
 }
 
 function setupPrioritiesSubMenu() {
@@ -269,6 +268,8 @@ function setupDatesLabel() {
 
 function setupSidebarItems() {
   const sidebarItems = document.querySelectorAll("aside ul li");
+  const createProjectButton = document.getElementById("createProjectButton");
+  const createProjectContainer = document.getElementById("createProjectContainer");
   sidebarItems.forEach((item) => {
     item.addEventListener("click", (event) => {
       const calendarContainer = document.getElementById("calendarContainer");
