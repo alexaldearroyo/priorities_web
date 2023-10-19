@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+
 function setupProjectEnvironment() {
     const createProjectButton = document.getElementById("createProjectButton");
     const createProjectContainer = document.getElementById("createProjectContainer");
