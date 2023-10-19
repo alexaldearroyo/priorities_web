@@ -8,7 +8,12 @@ import {
   loadTasksFromLocalStorage,
 } from "./localStorageManager.js";
 
-import { createTaskElement, removeTask } from "./taskManager.js";
+import { 
+  createTaskElement,
+  removeTask,
+  displayAllTasks,
+  filterTasksByPriority
+} from "./taskManager.js";
 
 import {
   displayProject,
@@ -168,19 +173,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for "Tasks"
   tasksLabel.addEventListener("click", displayAllTasks);
 
-  function displayAllTasks() {
-    addTaskButton.style.display = "flex"; // Shows "add task" button
+  // function displayAllTasks() {
+  //   addTaskButton.style.display = "flex"; // Shows "add task" button
 
-    const allTasks = loadTasksFromLocalStorage();
-    const tasksContainer = document.getElementById("tasks");
-    tasksContainer.innerHTML = ""; // Clear the current tasks
-    for (const taskData of allTasks) {
-      tasksContainer.appendChild(createTaskElement(taskData));
-    }
+  //   const allTasks = loadTasksFromLocalStorage();
+  //   const tasksContainer = document.getElementById("tasks");
+  //   tasksContainer.innerHTML = ""; // Clear the current tasks
+  //   for (const taskData of allTasks) {
+  //     tasksContainer.appendChild(createTaskElement(taskData));
+  //   }
 
     // Asegurarse de que el contenedor de tareas se muestre nuevamente
-    tasksContainer.style.display = "block";
-  }
+  //   tasksContainer.style.display = "block";
+  // }
 
   prioritiesToggle.addEventListener("click", () => {
     const isSubMenuVisible = subMenu.style.display === "block";
@@ -208,18 +213,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // Function to display tasks based on their priority
-  function filterTasksByPriority(priority) {
-    const allTasks = loadTasksFromLocalStorage();
-    const filteredTasks = allTasks.filter((task) => task.priority === priority);
-    const tasksContainer = document.getElementById("tasks");
-    tasksContainer.innerHTML = ""; // Clear the current tasks
-    for (const taskData of filteredTasks) {
-      tasksContainer.appendChild(createTaskElement(taskData));
-    }
+  // function filterTasksByPriority(priority) {
+  //   const allTasks = loadTasksFromLocalStorage();
+  //   const filteredTasks = allTasks.filter((task) => task.priority === priority);
+  //   const tasksContainer = document.getElementById("tasks");
+  //   tasksContainer.innerHTML = ""; // Clear the current tasks
+  //   for (const taskData of filteredTasks) {
+  //     tasksContainer.appendChild(createTaskElement(taskData));
+  //   }
 
-    const addTaskButton = document.getElementById("addTaskButton");
-    addTaskButton.style.display = "none"; // Oculta el botón "Add task"
-  }
+  //   const addTaskButton = document.getElementById("addTaskButton");
+  //   addTaskButton.style.display = "none"; // Oculta el botón "Add task"
+  // }
 
   // Agrega un evento para el elemento "Projects" en la barra lateral
   const projectsLabel = document.querySelector("#projectsMenuItem");

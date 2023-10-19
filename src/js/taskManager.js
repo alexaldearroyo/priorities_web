@@ -1,6 +1,43 @@
 import { saveTasksToLocalStorage, loadTasksFromLocalStorage } from './localStorageManager.js';
 
 /**
+ * Display all tasks.
+ */
+export function displayAllTasks() {
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.style.display = "flex"; // Shows "add task" button
+    const allTasks = loadTasksFromLocalStorage();
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.innerHTML = ""; // Clear the current tasks
+    for (const taskData of allTasks) {
+      tasksContainer.appendChild(createTaskElement(taskData));
+    }
+    tasksContainer.style.display = "block";
+  }
+  
+  /**
+   * Filter tasks by their priority.
+   * @param {string} priority - The selected priority.
+   */
+  export function filterTasksByPriority(priority) {
+    const allTasks = loadTasksFromLocalStorage();
+    const filteredTasks = allTasks.filter((task) => task.priority === priority);
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.innerHTML = ""; // Clear the current tasks
+    for (const taskData of filteredTasks) {
+      tasksContainer.appendChild(createTaskElement(taskData));
+    }
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.style.display = "none"; // Hide the "Add task" button
+  }
+  
+
+
+
+///// OLD
+
+
+/**
  * Create a DOM element for a task.
  * @param {Object} taskData - The data for the task.
  * @returns {HTMLElement} The task element.
