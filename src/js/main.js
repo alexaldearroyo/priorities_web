@@ -1,4 +1,3 @@
-
 // Import the main SASS styles
 import "../sass/main.sass";
 
@@ -33,19 +32,54 @@ import {
   COMPLETE_BUTTON_TEXT,
 } from "./constants.js";
 
-
 document.addEventListener("DOMContentLoaded", () => {
-  const createProjectButton = document.getElementById("createProjectButton");
-  const createProjectContainer = document.getElementById("createProjectContainer");
-
-  // loadAndDisplaySavedProjects(createProjectContainer);
-  setupCreateProjectButton(createProjectButton, createProjectContainer);
+    setupProjectEnvironment();
+    setupTaskEnvironment();
+    setupPrioritiesSubMenu();
+    setupProjectsLabel();
+    setupDatesLabel();
+    setupSidebarItems();
+    setupSidebarToggle();
 });
 
-// Wait for DOM to fully load before attaching event listeners
-document.addEventListener("DOMContentLoaded", () => {
-  // Reference to the "Add Task" button
-  const addTaskButton = document.getElementById("addTaskButton");
+function setupProjectEnvironment() {
+    const createProjectButton = document.getElementById("createProjectButton");
+    const createProjectContainer = document.getElementById("createProjectContainer");
+    setupCreateProjectButton(createProjectButton, createProjectContainer);
+}
+
+function setupTaskEnvironment() {
+    const addTaskButton = document.getElementById("addTaskButton");
+    const tasksContainer = document.getElementById("tasks");
+
+    // Hide the "Create Project" button initially
+    addTaskButton.style.display = "none";
+
+    // Add event listener to detect when a task is marked as complete
+    tasksContainer.addEventListener("click", handleTaskCompletion);
+
+    // Load and display existing tasks from local storage
+    loadAndDisplayTasks(tasksContainer);
+
+    // Add event listener for the "Add Task" button
+    addTaskButton.addEventListener("click", handleAddTaskClick);
+}
+
+function handleTaskCompletion(event) {
+    if (event.target.classList.contains("complete-button")) {
+        removeTask(event.target);
+    }
+}
+
+function loadAndDisplayTasks(tasksContainer) {
+    const storedTasks = loadTasksFromLocalStorage();
+    for (const taskData of storedTasks) {
+        tasksContainer.appendChild(createTaskElement(taskData));
+    }
+}
+
+function handleAddTaskClick() {
+ const addTaskButton = document.getElementById("addTaskButton");
   const createProjectButton = document.getElementById("createProjectButton"); // Moved this line up for reference
 
   // Initially hide the "Create Project" button
@@ -163,16 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Append new task element to tasks container
     tasksContainer.prepend(taskElement);
   });
+}
 
-  // Priorities Submenu
+function setupPrioritiesSubMenu() {
   const prioritiesToggle = document.getElementById("togglePriorities");
   const subMenu = document.querySelector(".sub-menu");
   const parentLi = prioritiesToggle.parentElement;
   const tasksLabel = document.querySelector("aside ul li:first-child");
 
-  // Event listener for "Tasks"
   tasksLabel.addEventListener("click", displayAllTasks);
-
 
   prioritiesToggle.addEventListener("click", () => {
     const isSubMenuVisible = subMenu.style.display === "block";
@@ -180,73 +213,57 @@ document.addEventListener("DOMContentLoaded", () => {
     parentLi.classList.toggle("sub-menu-opened", !isSubMenuVisible);
   });
 
-  // Filter tasks by selected priority from the sidebar menu
   subMenu.addEventListener("click", (event) => {
     if (event.target.tagName === "LI") {
       const selectedPriority = event.target.textContent;
       filterTasksByPriority(selectedPriority);
-      
-      // Asegurarse de que el contenedor de tareas se muestre nuevamente
       const tasksContainer = document.getElementById("tasks");
-      tasksContainer.style.display = "block";
-      
-      // Ocultar otros contenedores para mantener una vista limpia
+      tasksContainer.style.display = "block";      
       const createProjectContainer = document.getElementById("createProjectContainer");
       const calendarContainer = document.getElementById("calendarContainer");
       createProjectContainer.style.display = "none";
       calendarContainer.innerHTML = "";
     }
-});
+  });
+}
 
-
-  // Agrega un evento para el elemento "Projects" en la barra lateral
+function setupProjectsLabel() {
   const projectsLabel = document.querySelector("#projectsMenuItem");
+  let projectsAreShown = false;
   const createProjectContainer = document.getElementById(
     "createProjectContainer"
   );
   createProjectContainer.classList.add("project-container");
-
-  let projectsAreShown = false; // Variable para rastrear si los proyectos se muestran o no
-
   projectsLabel.addEventListener("click", () => {
-    // Verifica si los proyectos ya se están mostrando
+
     if (!projectsAreShown) {
-      // Oculta el botón "Add Task" u otros elementos relevantes
       const addTaskButton = document.getElementById("addTaskButton");
       if (addTaskButton) {
         addTaskButton.style.display = "none";
       }
   
-      // Muestra el botón "Create Project"
-      createProjectContainer.style.display = "block";
-  
+      createProjectContainer.style.display = "block";  
       loadAndDisplaySavedProjects(createProjectContainer);
   
-      // Oculta el cuadro de tareas
       const tasksContainer = document.getElementById("tasks");
       tasksContainer.style.display = "none";
-  
-      // Marca que los proyectos se están mostrando
-      projectsAreShown = true;
+        projectsAreShown = true;
     }
   });
-  
+}
 
-  // Display tasks on a calendar view when "Dates" menu item is clicked
+function setupDatesLabel() {
   const datesLabel = document.querySelector("aside ul li:nth-child(4)");
-
-  // Event listener for "Dates" menu item
   datesLabel.addEventListener("click", displayCalendarWithTasks);
-
-  // Function to create a basic calendar view and highlight dates with tasks
   datesLabel.addEventListener("click", () => {
     const allTasks = loadTasksFromLocalStorage();
     const tasksContainer = document.getElementById("tasks");
     const calendarContainer = document.getElementById("calendarContainer");
     displayCalendarWithTasks(tasksContainer, calendarContainer, allTasks);
   });
+}
 
-  // Get all sidebar items and add an event listener to hide calendar when any item other than "Dates" is clicked
+function setupSidebarItems() {
   const sidebarItems = document.querySelectorAll("aside ul li");
   sidebarItems.forEach((item) => {
     item.addEventListener("click", (event) => {
@@ -275,14 +292,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  
+}
 
-
-  // Sidebar toggle functionality for mobile or smaller screens
-  const toggleSidebarButton = document.getElementById("toggleSidebar");
-  const sidebar = document.querySelector("aside");
-
-  toggleSidebarButton.addEventListener("click", () => {
-    sidebar.classList.toggle("hidden");
-  });
-});
+function setupSidebarToggle() {
+    const toggleSidebarButton = document.getElementById("toggleSidebar");
+    const sidebar = document.querySelector("aside");
+    toggleSidebarButton.addEventListener("click", () => {
+        sidebar.classList.toggle("hidden");
+    });
+}
