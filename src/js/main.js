@@ -40,11 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
     setupDatesLabel();
     setupSidebarItems();
     setupSidebarToggle();
+    displayAllTasks();
+
 });
 
 function setupProjectEnvironment() {
     const createProjectButton = document.getElementById("createProjectButton");
     const createProjectContainer = document.getElementById("createProjectContainer");
+    createProjectButton.style.display = "none";
     setupCreateProjectButton(createProjectButton, createProjectContainer);
 }
 
