@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const createProjectButton = document.getElementById("createProjectButton");
   const createProjectContainer = document.getElementById("createProjectContainer");
 
-  loadAndDisplaySavedProjects(createProjectContainer);
+  // loadAndDisplaySavedProjects(createProjectContainer);
   setupCreateProjectButton(createProjectButton, createProjectContainer);
 });
 
@@ -173,19 +173,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for "Tasks"
   tasksLabel.addEventListener("click", displayAllTasks);
 
-  // function displayAllTasks() {
-  //   addTaskButton.style.display = "flex"; // Shows "add task" button
-
-  //   const allTasks = loadTasksFromLocalStorage();
-  //   const tasksContainer = document.getElementById("tasks");
-  //   tasksContainer.innerHTML = ""; // Clear the current tasks
-  //   for (const taskData of allTasks) {
-  //     tasksContainer.appendChild(createTaskElement(taskData));
-  //   }
-
-    // Asegurarse de que el contenedor de tareas se muestre nuevamente
-  //   tasksContainer.style.display = "block";
-  // }
 
   prioritiesToggle.addEventListener("click", () => {
     const isSubMenuVisible = subMenu.style.display === "block";
@@ -212,20 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-  // Function to display tasks based on their priority
-  // function filterTasksByPriority(priority) {
-  //   const allTasks = loadTasksFromLocalStorage();
-  //   const filteredTasks = allTasks.filter((task) => task.priority === priority);
-  //   const tasksContainer = document.getElementById("tasks");
-  //   tasksContainer.innerHTML = ""; // Clear the current tasks
-  //   for (const taskData of filteredTasks) {
-  //     tasksContainer.appendChild(createTaskElement(taskData));
-  //   }
-
-  //   const addTaskButton = document.getElementById("addTaskButton");
-  //   addTaskButton.style.display = "none"; // Oculta el botón "Add task"
-  // }
-
   // Agrega un evento para el elemento "Projects" en la barra lateral
   const projectsLabel = document.querySelector("#projectsMenuItem");
   const createProjectContainer = document.getElementById(
@@ -234,7 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
   createProjectContainer.classList.add("project-container");
 
   projectsLabel.addEventListener("click", () => {
-    console.log("Clicked on Projects"); // Añade esta línea
+
+    if (createProjectContainer.style.display === "block") {
+      return;
+    }
+
     // Oculta el botón "Add Task" u otros elementos relevantes
     if (addTaskButton) {
       addTaskButton.style.display = "none";
@@ -242,6 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Muestra el botón "Create Project"
     createProjectContainer.style.display = "block";
+
+    loadAndDisplaySavedProjects(createProjectContainer);
 
     // Oculta el cuadro de tareas
     const tasksContainer = document.getElementById("tasks");

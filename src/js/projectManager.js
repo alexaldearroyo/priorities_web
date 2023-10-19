@@ -52,6 +52,12 @@ export function displayProject(projectName, createProjectContainer) {
 }
 
 export function loadAndDisplaySavedProjects(createProjectContainer) {
+    // Referencia al contenedor de la lista de proyectos
+    const projectsListContainer = document.getElementById("projectsList");
+
+    // Limpia cualquier proyecto existente en el contenedor
+    projectsListContainer.innerHTML = "";
+
     const savedProjects = loadProjectsFromLocalStorage();
     savedProjects.forEach(projectName => {
         displayProject(projectName, createProjectContainer);
