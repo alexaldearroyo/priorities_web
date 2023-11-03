@@ -64,3 +64,4 @@ export function removeProjectFromLocalStorage(projectName) {
     projects.splice(index, 1);
     saveProjectsToLocalStorage(projects);
 }
+}
