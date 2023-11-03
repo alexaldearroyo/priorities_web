@@ -8,6 +8,7 @@ import {
   DATE_LABEL,
   ADD_BUTTON_TEXT,
   CANCEL_BUTTON_TEXT,
+  PRIORITIES,
 } from "./constants.js";
 
 export function displayAllTasks() {

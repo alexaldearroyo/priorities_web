@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSidebarItems();
   setupSidebarToggle();
   displayAllTasks();
-  const calendarContainer = document.getElementById("calendarContainer");
 });
 
 function setupProjectEnvironment() {
@@ -57,17 +56,6 @@ function setupTaskEnvironment() {
   // Add event listener for the "Add Task" button
   addTaskButton.addEventListener("click", handleAddTaskClick);
 }
-
-
-
-function loadAndDisplayTasks(tasksContainer) {
-  const storedTasks = loadTasksFromLocalStorage();
-  for (const taskData of storedTasks) {
-    tasksContainer.appendChild(createTaskElement(taskData));
-  }
-}
-
-
 
 function setupPrioritiesSubMenu() {
   const prioritiesToggle = document.getElementById("togglePriorities");
