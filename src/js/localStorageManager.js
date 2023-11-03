@@ -1,5 +1,3 @@
-// localStorageManager.js
-
 const TASK_STORAGE_KEY = "tasks";
 
 /**
@@ -54,24 +52,15 @@ export function loadProjectsFromLocalStorage() {
  */
 export function addProjectToLocalStorage(projectName) {
   const projects = loadProjectsFromLocalStorage();
-  console.log('Antes de añadir:', projects); // Depuración
   projects.push(projectName);
   saveProjectsToLocalStorage(projects);
-  console.log('Después de añadir:', projects); // Depuración
 }
 
 export function removeProjectFromLocalStorage(projectName) {
-  console.log(`Dentro de removeProjectFromLocalStorage para: ${projectName}`); // Depuración
 
   const projects = loadProjectsFromLocalStorage();
-  console.log('Antes de eliminar:', projects); // Depuración
-
-
   const index = projects.indexOf(projectName);
   if (index > -1) {
     projects.splice(index, 1);
     saveProjectsToLocalStorage(projects);
-  } else {
-    console.log(`El proyecto ${projectName} no fue encontrado`); // Depuración
- }
 }
