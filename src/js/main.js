@@ -3,32 +3,28 @@ import "../sass/main.sass";
 
 // Import functions and constants from modularized files
 import {
-  saveTasksToLocalStorage,
   loadTasksFromLocalStorage,
 } from "./localStorageManager.js";
 
 import {
   handleAddTaskClick,
   handleTaskCompletion,
-  createTaskElement,
-  removeTask,
   displayAllTasks,
   filterTasksByPriority,
 } from "./taskManager.js";
 
 import {
-  displayProject,
+  displayProject, // QUIZÁS EN UN FUTURO
   setupCreateProjectButton,
-  loadAndDisplaySavedProjects,
+  loadProjects,
 } from "./projectManager";
 
 import { displayCalendarWithTasks } from "./calendarManager.js";
 
-
 document.addEventListener("DOMContentLoaded", () => {
-  setupProjectEnvironment();
   setupTaskEnvironment();
   setupPrioritiesSubMenu();
+  setupProjectEnvironment();
   setupProjectsLabel();
   setupDatesLabel();
   setupSidebarItems();
@@ -36,25 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
   displayAllTasks();
 });
 
-function setupProjectEnvironment() {
-  const createProjectButton = document.getElementById("createProjectButton");
-  const projectsContainer = document.getElementById("projectsContainer");
-  createProjectButton.style.display = "none";
-  setupCreateProjectButton(createProjectButton, projectsContainer);
-}
-
 function setupTaskEnvironment() {
   const addTaskButton = document.getElementById("addTaskButton");
   const tasksContainer = document.getElementById("tasks");
 
-  // Hide the "Create Project" button initially
   addTaskButton.style.display = "none";
-
-  // Add event listener to detect when a task is marked as complete
-  tasksContainer.addEventListener("click", handleTaskCompletion);
-
-  // Add event listener for the "Add Task" button
   addTaskButton.addEventListener("click", handleAddTaskClick);
+  tasksContainer.addEventListener("click", handleTaskCompletion);
 }
 
 function setupPrioritiesSubMenu() {
@@ -85,6 +69,13 @@ function setupPrioritiesSubMenu() {
   });
 }
 
+function setupProjectEnvironment() {
+  const createProjectButton = document.getElementById("createProjectButton");
+  const projectsContainer = document.getElementById("projectsContainer");
+  createProjectButton.style.display = "none";
+  setupCreateProjectButton(createProjectButton, projectsContainer);
+}
+
 function setupProjectsLabel() {
   const projectsLabel = document.querySelector("#menuProjects");
   let projectsAreShown = false;
@@ -98,7 +89,7 @@ function setupProjectsLabel() {
       }
 
       projectsContainer.style.display = "block";
-      loadAndDisplaySavedProjects(projectsContainer);
+      loadProjects(projectsContainer);
 
       const tasksContainer = document.getElementById("tasks");
       tasksContainer.style.display = "none";

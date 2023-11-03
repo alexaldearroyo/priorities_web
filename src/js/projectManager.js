@@ -51,7 +51,7 @@ export function displayProject(projectName, projectsContainer) {
     projectsContainer.appendChild(projectElement);
 }
 
-export function loadAndDisplaySavedProjects(projectsContainer) {
+export function loadProjects(projectsContainer) {
     // Referencia al contenedor de la lista de proyectos
     const projectsListContainer = document.getElementById("projectsList");
 
