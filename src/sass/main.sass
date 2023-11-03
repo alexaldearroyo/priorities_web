@@ -350,18 +350,18 @@ button
 
 // Projects Styles
 
-#createProjectContainer
+#projectsContainer
   display: flex // Para que los elementos se muestren en línea
   align-items: center // Para centrar verticalmente los elementos
   flex-direction: column
 
-#createProjectContainer input[type="text"]
+#projectsContainer input[type="text"]
   flex: 1 // El input ocupará todo el espacio disponible
   margin-right: 10px // Espacio entre el input y los botones
   height: $common-height
   padding: 0 10px
 
-#createProjectContainer button
+#projectsContainer button
   background-color: $bg-color-button
   color: $color-inverse
   padding: 10px 20px
@@ -467,7 +467,7 @@ i
   padding-right: 8px
   font-weight: 900
 
-#projectsMenuItem::before
+#menuProjects::before
   content: "\f07b"
   font-family: "Font Awesome 5 Free"
   padding-right: 8px
@@ -479,6 +479,6 @@ i
   padding-right: 8px
   font-weight: 900
 
-#menuTasks, #togglePriorities, #projectsMenuItem, #menuDates
+#menuTasks, #togglePriorities, #menuProjects, #menuDates
   &:hover, &.active
     color: #15c1ff

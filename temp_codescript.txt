@@ -157,6 +157,109 @@ export function displayCalendarWithTasks(tasksContainer, calendarContainer, allT
 
 ----------------------------------------
 
+src/js/constants.js:
+
+// Priorities for tasks
+export const PRIORITIES = ["High", "Medium", "Low"];
+
+// LocalStorage key for tasks
+export const LOCAL_STORAGE_KEY = "tasks";
+
+// Placeholder for the task input
+export const TASK_INPUT_PLACEHOLDER = "Write your task here";
+
+// Labels
+export const PRIORITY_LABEL = "Priority";
+export const DATE_LABEL = "Date";
+
+// Button texts
+export const ADD_BUTTON_TEXT = "Add";
+export const CANCEL_BUTTON_TEXT = "Cancel";
+export const COMPLETE_BUTTON_TEXT = "Complete";
+----------------------------------------
+
+src/js/localStorageManager.js:
+
+// localStorageManager.js
+
+const TASK_STORAGE_KEY = "tasks";
+
+/**
+ * Save tasks to LocalStorage.
+ * @param {Array} tasks - The tasks to save.
+ */
+export function saveTasksToLocalStorage(tasks) {
+  localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(tasks));
+}
+
+/**
+ * Load tasks from LocalStorage.
+ * @returns {Array} The tasks loaded from LocalStorage.
+ */
+export function loadTasksFromLocalStorage() {
+  const storedTasks = localStorage.getItem(TASK_STORAGE_KEY);
+  return storedTasks ? JSON.parse(storedTasks).filter(task => task.timestamp) : [];
+}
+
+/**
+ * Remove a task from LocalStorage based on its timestamp.
+ * @param {number} taskTimestamp - The timestamp of the task to remove.
+ */
+export function removeTaskFromLocalStorage(taskTimestamp) {
+  const tasks = loadTasksFromLocalStorage().filter(task => task.timestamp && task.timestamp.toString() !== taskTimestamp);
+  saveTasksToLocalStorage(tasks);
+}
+
+
+const PROJECT_STORAGE_KEY = "projects";
+
+/**
+ * Save projects to LocalStorage.
+ * @param {Array} projects - The projects to save.
+ */
+export function saveProjectsToLocalStorage(projects) {
+  localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(projects));
+}
+
+/**
+ * Load projects from LocalStorage.
+ * @returns {Array} The projects loaded from LocalStorage.
+ */
+export function loadProjectsFromLocalStorage() {
+  const storedProjects = localStorage.getItem(PROJECT_STORAGE_KEY);
+  return storedProjects ? JSON.parse(storedProjects) : [];
+}
+
+/**
+ * Add a new project to LocalStorage.
+ * @param {string} projectName - The name of the new project.
+ */
+export function addProjectToLocalStorage(projectName) {
+  const projects = loadProjectsFromLocalStorage();
+  console.log('Antes de añadir:', projects); // Depuración
+  projects.push(projectName);
+  saveProjectsToLocalStorage(projects);
+  console.log('Después de añadir:', projects); // Depuración
+}
+
+export function removeProjectFromLocalStorage(projectName) {
+  console.log(`Dentro de removeProjectFromLocalStorage para: ${projectName}`); // Depuración
+
+  const projects = loadProjectsFromLocalStorage();
+  console.log('Antes de eliminar:', projects); // Depuración
+
+
+  const index = projects.indexOf(projectName);
+  if (index > -1) {
+    projects.splice(index, 1);
+    saveProjectsToLocalStorage(projects);
+  } else {
+    console.log(`El proyecto ${projectName} no fue encontrado`); // Depuración
+ }
+}
+
+----------------------------------------
+
 src/js/main.js:
 
 // Import the main SASS styles
@@ -168,11 +271,11 @@ import {
   loadTasksFromLocalStorage,
 } from "./localStorageManager.js";
 
-import { 
+import {
   createTaskElement,
   removeTask,
   displayAllTasks,
-  filterTasksByPriority
+  filterTasksByPriority,
 } from "./taskManager.js";
 
 import {
@@ -190,179 +293,137 @@ import {
   DATE_LABEL,
   ADD_BUTTON_TEXT,
   CANCEL_BUTTON_TEXT,
-  COMPLETE_BUTTON_TEXT,
 } from "./constants.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    setupProjectEnvironment();
-    setupTaskEnvironment();
-    setupPrioritiesSubMenu();
-    setupProjectsLabel();
-    setupDatesLabel();
-    setupSidebarItems();
-    setupSidebarToggle();
-    displayAllTasks();
-    const calendarContainer = document.getElementById("calendarContainer");
-
-
+  setupTaskEnvironment();
+  setupPrioritiesSubMenu();
+  setupProjectEnvironment();
+  setupProjectsLabel();
+  setupDatesLabel();
+  setupSidebarItems();
+  setupSidebarToggle();
+  displayAllTasks();
 });
 
-
-function setupProjectEnvironment() {
-    const createProjectButton = document.getElementById("createProjectButton");
-    const createProjectContainer = document.getElementById("createProjectContainer");
-    createProjectButton.style.display = "none";
-    setupCreateProjectButton(createProjectButton, createProjectContainer);
-}
-
 function setupTaskEnvironment() {
-    const addTaskButton = document.getElementById("addTaskButton");
-    const tasksContainer = document.getElementById("tasks");
+  const addTaskButton = document.getElementById("addTaskButton");
+  const tasksContainer = document.getElementById("tasks");
 
-    // Hide the "Create Project" button initially
-    addTaskButton.style.display = "none";
+  addTaskButton.addEventListener("click", handleAddTaskClick);
 
-    // Add event listener to detect when a task is marked as complete
-    tasksContainer.addEventListener("click", handleTaskCompletion);
+  tasksContainer.addEventListener("click", handleTaskCompletion);
 
-    // Load and display existing tasks from local storage
-    // loadAndDisplayTasks(tasksContainer);
 
-    // Add event listener for the "Add Task" button
-    addTaskButton.addEventListener("click", handleAddTaskClick);
-}
-
-function handleTaskCompletion(event) {
-    if (event.target.classList.contains("complete-button")) {
-        removeTask(event.target);
-    }
-}
-
-function loadAndDisplayTasks(tasksContainer) {
-    const storedTasks = loadTasksFromLocalStorage();
-    for (const taskData of storedTasks) {
-        tasksContainer.appendChild(createTaskElement(taskData));
-    }
 }
 
 function handleAddTaskClick() {
   const addTaskButton = document.getElementById("addTaskButton");
-  const createProjectButton = document.getElementById("createProjectButton"); // Moved this line up for reference
+  const createProjectButton = document.getElementById("createProjectButton");
 
-  // Initially hide the "Create Project" button
   createProjectButton.style.display = "none";
 
- // Reference to the main tasks container
- const tasksContainer = document.getElementById("tasks");
-  // tasksContainer.addEventListener("click", (event) => {
-  //   if (event.target.classList.contains("complete-button")) {
-  //     removeTask(event.target);
-  //   }
-  // });
+  const tasksContainer = document.getElementById("tasks");
 
-  // Load existing tasks from local storage and display them
-  // const storedTasks = loadTasksFromLocalStorage();
-  // for (const taskData of storedTasks) {
-  //   tasksContainer.appendChild(createTaskElement(taskData));
-  // }
+  addTaskButton.disabled = true;
 
-  // Event listener for the "Add Task" button
-  // addTaskButton.addEventListener("click", () => {
-    // Disable the "Add Task" button to prevent multiple task additions
-    addTaskButton.disabled = true;
+  const taskElement = document.createElement("div");
+  taskElement.classList.add("new-task");
 
-    // Create new task input form elements
-    const taskElement = document.createElement("div");
-    taskElement.classList.add("new-task");
+  // Text input
+  const textInput = document.createElement("input");
+  textInput.type = "text";
+  textInput.placeholder = TASK_INPUT_PLACEHOLDER;
+  textInput.classList.add("task-input");
 
-    // Text input
-    const textInput = document.createElement("input");
-    textInput.type = "text";
-    textInput.placeholder = TASK_INPUT_PLACEHOLDER;
-    textInput.classList.add("task-input");
+  const actionContainer = document.createElement("div");
+  actionContainer.classList.add("action-container");
 
-    const actionContainer = document.createElement("div");
-    actionContainer.classList.add("action-container");
+  // Priority select
+  const priorityContainer = document.createElement("div");
+  priorityContainer.classList.add("custom-container", "priority-container");
+  const priorityLabel = document.createElement("label");
+  priorityLabel.textContent = PRIORITY_LABEL;
+  const prioritySelect = document.createElement("select");
+  PRIORITIES.forEach((priority) => {
+    const option = document.createElement("option");
+    option.value = priority;
+    option.textContent = priority;
+    prioritySelect.appendChild(option);
+  });
+  priorityContainer.appendChild(priorityLabel);
+  priorityContainer.appendChild(prioritySelect);
 
-    // Priority select
-    const priorityContainer = document.createElement("div");
-    priorityContainer.classList.add("custom-container", "priority-container");
-    const priorityLabel = document.createElement("label");
-    priorityLabel.textContent = PRIORITY_LABEL;
-    const prioritySelect = document.createElement("select");
-    PRIORITIES.forEach((priority) => {
-      const option = document.createElement("option");
-      option.value = priority;
-      option.textContent = priority;
-      prioritySelect.appendChild(option);
-    });
-    priorityContainer.appendChild(priorityLabel);
-    priorityContainer.appendChild(prioritySelect);
+  // Date input
+  const dateContainer = document.createElement("div");
+  dateContainer.classList.add("custom-container", "date-container");
+  const dateLabel = document.createElement("label");
+  dateLabel.textContent = DATE_LABEL;
+  const dateInput = document.createElement("input");
+  dateInput.type = "date";
+  dateContainer.appendChild(dateLabel);
+  dateContainer.appendChild(dateInput);
 
-    // Date input
-    const dateContainer = document.createElement("div");
-    dateContainer.classList.add("custom-container", "date-container");
-    const dateLabel = document.createElement("label");
-    dateLabel.textContent = DATE_LABEL;
-    const dateInput = document.createElement("input");
-    dateInput.type = "date";
-    dateContainer.appendChild(dateLabel);
-    dateContainer.appendChild(dateInput);
+  // Buttons
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.classList.add("buttons-container");
 
-    // Buttons
-    const buttonsContainer = document.createElement("div");
-    buttonsContainer.classList.add("buttons-container");
+  const addButton = document.createElement("button");
+  addButton.textContent = ADD_BUTTON_TEXT;
+  buttonsContainer.appendChild(addButton);
 
-    const addButton = document.createElement("button");
-    addButton.textContent = ADD_BUTTON_TEXT;
-    buttonsContainer.appendChild(addButton);
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = CANCEL_BUTTON_TEXT;
+  buttonsContainer.appendChild(cancelButton);
 
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = CANCEL_BUTTON_TEXT;
-    buttonsContainer.appendChild(cancelButton);
+  // Add the input elements to the task element
+  const inputGroup = document.createElement("div");
+  inputGroup.classList.add("input-group");
+  inputGroup.appendChild(textInput);
+  taskElement.appendChild(inputGroup);
 
-    // Add the input elements to the task element
-    const inputGroup = document.createElement("div");
-    inputGroup.classList.add("input-group");
-    inputGroup.appendChild(textInput);
-    taskElement.appendChild(inputGroup);
+  actionContainer.appendChild(priorityContainer);
+  actionContainer.appendChild(dateContainer);
+  actionContainer.appendChild(buttonsContainer);
 
-    actionContainer.appendChild(priorityContainer);
-    actionContainer.appendChild(dateContainer);
-    actionContainer.appendChild(buttonsContainer);
+  taskElement.appendChild(actionContainer);
 
-    taskElement.appendChild(actionContainer);
+  // Event listeners for adding and cancelling the creation of new tasks
+  addButton.addEventListener("click", () => {
+    if (textInput.value) {
+      const taskTimestamp = Date.now();
+      const taskData = {
+        timestamp: taskTimestamp,
+        text: textInput.value,
+        priority: prioritySelect.value,
+        date: dateInput.value,
+      };
+      tasksContainer.appendChild(createTaskElement(taskData));
 
-    // Event listeners for adding and cancelling the creation of new tasks
-    addButton.addEventListener("click", () => {
-      if (textInput.value) {
-        const taskTimestamp = Date.now();
-        const taskData = {
-          timestamp: taskTimestamp,
-          text: textInput.value,
-          priority: prioritySelect.value,
-          date: dateInput.value,
-        };
-        tasksContainer.appendChild(createTaskElement(taskData));
+      // Add task data to local storage
+      const tasks = loadTasksFromLocalStorage();
+      tasks.push(taskData);
+      saveTasksToLocalStorage(tasks);
 
-        // Add task data to local storage
-        const tasks = loadTasksFromLocalStorage();
-        tasks.push(taskData);
-        saveTasksToLocalStorage(tasks);
-
-        taskElement.remove();
-        addTaskButton.disabled = false;
-      }
-    });
-
-    // Handle task cancellation
-    cancelButton.addEventListener("click", () => {
       taskElement.remove();
       addTaskButton.disabled = false;
-    });
+    }
+  });
 
-    // Append new task element to tasks container
-    tasksContainer.prepend(taskElement);
+  // Handle task cancellation
+  cancelButton.addEventListener("click", () => {
+    taskElement.remove();
+    addTaskButton.disabled = false;
+  });
+
+  // Append new task element to tasks container
+  tasksContainer.prepend(taskElement);
+}
+
+function handleTaskCompletion(event) {
+  if (event.target.classList.contains("complete-button")) {
+    removeTask(event.target);
+  }
 }
 
 function setupPrioritiesSubMenu() {
@@ -384,43 +445,52 @@ function setupPrioritiesSubMenu() {
       const selectedPriority = event.target.textContent;
       filterTasksByPriority(selectedPriority);
       const tasksContainer = document.getElementById("tasks");
-      tasksContainer.style.display = "block";      
-      const createProjectContainer = document.getElementById("createProjectContainer");
+      tasksContainer.style.display = "block";
+      const projectsContainer = document.getElementById(
+        "projectsContainer"
+      );
       const calendarContainer = document.getElementById("calendarContainer");
-      createProjectContainer.style.display = "none";
+      projectsContainer.style.display = "none";
       calendarContainer.innerHTML = "";
     }
   });
 }
 
-function setupProjectsLabel() {
-  const projectsLabel = document.querySelector("#projectsMenuItem");
-  let projectsAreShown = false;
-  const createProjectContainer = document.getElementById(
-    "createProjectContainer"
+function setupProjectEnvironment() {
+  const createProjectButton = document.getElementById("createProjectButton");
+  const projectsContainer = document.getElementById(
+    "projectsContainer"
   );
-  createProjectContainer.classList.add("project-container");
-  projectsLabel.addEventListener("click", () => {
+  createProjectButton.style.display = "none";
+  setupCreateProjectButton(createProjectButton, projectsContainer);
+}
 
+function setupProjectsLabel() {
+  const projectsLabel = document.querySelector("#menuProjects");
+  let projectsAreShown = false;
+  const projectsContainer = document.getElementById(
+    "projectsContainer"
+  );
+  projectsContainer.classList.add("project-container");
+  projectsLabel.addEventListener("click", () => {
     if (!projectsAreShown) {
       const addTaskButton = document.getElementById("addTaskButton");
       if (addTaskButton) {
         addTaskButton.style.display = "none";
       }
-  
-      createProjectContainer.style.display = "block";  
-      loadAndDisplaySavedProjects(createProjectContainer);
-  
+
+      projectsContainer.style.display = "block";
+      loadAndDisplaySavedProjects(projectsContainer);
+
       const tasksContainer = document.getElementById("tasks");
       tasksContainer.style.display = "none";
-        projectsAreShown = true;
+      projectsAreShown = true;
     }
   });
 }
 
 function setupDatesLabel() {
   const datesLabel = document.querySelector("aside ul li:nth-child(4)");
-  datesLabel.addEventListener("click", displayCalendarWithTasks);
   datesLabel.addEventListener("click", () => {
     const allTasks = loadTasksFromLocalStorage();
     const tasksContainer = document.getElementById("tasks");
@@ -432,42 +502,784 @@ function setupDatesLabel() {
 function setupSidebarItems() {
   const sidebarItems = document.querySelectorAll("aside ul li");
   const createProjectButton = document.getElementById("createProjectButton");
-  const createProjectContainer = document.getElementById("createProjectContainer");
+  const projectsContainer = document.getElementById(
+    "projectsContainer"
+  );
   sidebarItems.forEach((item) => {
     item.addEventListener("click", (event) => {
       const calendarContainer = document.getElementById("calendarContainer");
-  
+
       switch (event.target.textContent) {
         case "Projects":
           createProjectButton.style.display = "block";
-          createProjectContainer.style.display = "block";
+          projectsContainer.style.display = "block";
           calendarContainer.innerHTML = ""; // Clear the calendar container
           break;
         case "Dates":
           createProjectButton.style.display = "none";
-          createProjectContainer.style.display = "none";
-  
+          projectsContainer.style.display = "none";
+
           const allTasks = loadTasksFromLocalStorage();
           const tasksContainer = document.getElementById("tasks");
           displayCalendarWithTasks(tasksContainer, calendarContainer, allTasks);
           break;
         default:
           createProjectButton.style.display = "none";
-          createProjectContainer.style.display = "none";
+          projectsContainer.style.display = "none";
           calendarContainer.innerHTML = ""; // Clear the calendar container
           break;
       }
     });
   });
-  
 }
 
 function setupSidebarToggle() {
-    const toggleSidebarButton = document.getElementById("toggleSidebar");
-    const sidebar = document.querySelector("aside");
-    toggleSidebarButton.addEventListener("click", () => {
-        sidebar.classList.toggle("hidden");
+  const toggleSidebarButton = document.getElementById("toggleSidebar");
+  const sidebar = document.querySelector("aside");
+  toggleSidebarButton.addEventListener("click", () => {
+    sidebar.classList.toggle("hidden");
+  });
+}
+
+----------------------------------------
+
+src/js/taskManager.js:
+
+import { saveTasksToLocalStorage, loadTasksFromLocalStorage } from './localStorageManager.js';
+
+/**
+ * Display all tasks.
+ */
+export function displayAllTasks() {
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.style.display = "flex"; // Shows "add task" button
+    const allTasks = loadTasksFromLocalStorage();
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.innerHTML = ""; // Clear the current tasks
+    for (const taskData of allTasks) {
+      tasksContainer.appendChild(createTaskElement(taskData));
+    }
+    tasksContainer.style.display = "block";
+  }
+  
+  /**
+   * Filter tasks by their priority.
+   * @param {string} priority - The selected priority.
+   */
+  export function filterTasksByPriority(priority) {
+    const allTasks = loadTasksFromLocalStorage();
+    const filteredTasks = allTasks.filter((task) => task.priority === priority);
+    const tasksContainer = document.getElementById("tasks");
+    tasksContainer.innerHTML = ""; // Clear the current tasks
+    for (const taskData of filteredTasks) {
+      tasksContainer.appendChild(createTaskElement(taskData));
+    }
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.style.display = "none"; // Hide the "Add task" button
+  }
+  
+
+
+
+///// OLD
+
+
+/**
+ * Create a DOM element for a task.
+ * @param {Object} taskData - The data for the task.
+ * @returns {HTMLElement} The task element.
+ */
+export function createTaskElement(taskData) {
+    const task = document.createElement('div');
+    task.classList.add('task');
+    task.dataset.timestamp = taskData.timestamp;
+
+    const taskText = document.createElement('div');
+    taskText.classList.add('task-text');
+    taskText.textContent = taskData.text;
+    task.appendChild(taskText);
+
+    const taskDetails = document.createElement('div');
+    taskDetails.classList.add('task-details');
+
+    const priorityContainer = document.createElement('div');
+    priorityContainer.classList.add('custom-container', 'priority-container');
+    const prioritySpan = document.createElement('span');
+    prioritySpan.textContent = taskData.priority;
+    priorityContainer.appendChild(prioritySpan);
+
+    if(taskData.date && taskData.date.trim() !== "") { // Comprobar si hay fecha y no está vacía
+        const dateContainer = document.createElement('div');
+        dateContainer.classList.add('custom-container', 'date-container');
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = taskData.date;
+        dateContainer.appendChild(dateSpan);
+        taskDetails.appendChild(dateContainer);
+    }
+
+    const completeButton = document.createElement('button');
+    completeButton.classList.add('complete-button');
+    completeButton.textContent = "Complete";
+    completeButton.addEventListener("click", function() {
+      removeTask(this);
     });
+
+    taskDetails.appendChild(priorityContainer);
+    taskDetails.appendChild(completeButton);
+
+    task.appendChild(taskDetails);
+
+    return task;
+}
+
+/**
+ * Remove a task element from the DOM and update localStorage.
+ * @param {HTMLElement} buttonElement - The button element that triggered the removal.
+ */
+export function removeTask(buttonElement) {
+    const taskElement = buttonElement.parentElement.parentElement;
+    const taskTimestamp = taskElement.dataset.timestamp;
+
+    taskElement.remove();
+
+    const tasks = loadTasksFromLocalStorage().filter(task => task.timestamp && task.timestamp.toString() !== taskTimestamp);
+    saveTasksToLocalStorage(tasks);
+}
+
+----------------------------------------
+
+src/sass/main.sass:
+
+// Variables
+$bg-color-main: #f4f4f4
+$bg-color-aside: #2c3e50
+$bg-color-button: #e74c3c
+$color-main: #333
+$color-inverse: #ecf0f1
+$font-main: 'Arial', sans-serif
+$common-height: 30px
+
+// Basic reset and global settings
+*
+  margin: 0
+  padding: 0
+  box-sizing: border-box
+  font-family: $font-main
+
+body
+  background-color: $bg-color-main
+  color: $color-main
+  padding: 10%
+  margin: 0
+
+// Hamburger Menu Styles
+.hamburger-menu
+  background: none
+  border: none
+  font-size: 2em
+  cursor: pointer
+  color: $color-main
+  margin-right: 20px
+  padding: 0
+  display: inline
+  outline: none
+  transition: none
+  min-width: 0
+
+  &:hover, &:focus
+    color: #15c1ff
+    border: none
+    outline: none
+    background: none
+
+
+// Style for hidden sidebar
+aside.hidden
+  display: none
+
+#title
+  max-width: 1200px
+  margin: 40px auto
+
+// Header styles
+#app-title
+  font-family: 'Courier New', Courier, monospace
+  font-size: 2em
+  font-weight: bold
+
+// Main structure
+#app
+  display: flex
+  max-width: 1200px
+  margin: 40px auto
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1)
+
+  // Sidebar
+  aside
+    width: 250px
+    background-color: $bg-color-aside
+    color: $color-inverse
+    padding: 20px
+
+    ul, li, .sub-menu li
+      list-style-type: none
+      margin-top: 10px
+      margin-bottom: 10px
+      font-size: 1em
+      line-height: 1.5em
+      cursor: pointer
+
+    // Projects Menu
+  #togglePriorities
+    cursor: pointer
+    display: block
+
+    &:before
+      content: "\f054" // Código Unicode para fa-chevron-right
+      font-family: "Font Awesome 5 Free" // Asegúrate de usar la familia de fuentes correcta
+      font-weight: 900 // Font Awesome 5 requiere un font-weight de 900 para los iconos sólidos
+      display: inline-block
+      margin-right: 5px
+
+  li.sub-menu-opened
+    #togglePriorities:before
+      content: "\f078" // Código Unicode para fa-chevron-down
+
+
+  .sub-menu
+    margin-left: 20px
+    display: none
+
+  // Main content
+  main
+    flex: 1
+    background-color: $color-inverse
+    padding: 20px
+
+// Common style
+.custom-container
+  background-color: blue
+  padding: 5px 10px
+  border-radius: 5px
+  height: $common-height
+  display: flex
+  align-items: center
+  justify-content: center
+  
+  label, span
+    color: $color-inverse
+    line-height: 20px
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+  span
+    font-size: 0.8em
+
+.buttons-container
+  display: flex
+
+button
+  height: $common-height
+  background-color: $bg-color-button
+  color: $color-inverse
+  padding: 10px 20px
+  border: none
+  border-radius: 5px
+  cursor: pointer
+  transition: background-color 0.3s ease
+  margin: 5px
+  min-width: 100px
+  font-size: 14px
+  text-align: center
+  display: flex
+  align-items: center
+  justify-content: center
+
+  &.add-button
+    margin-right: 10px
+
+  &:hover
+    background-color: darken($bg-color-button, 10%)
+
+#addTaskButton
+  display: flex
+  align-items: center
+  justify-content: center
+
+// Saved Tasks Styles
+.task, .new-task
+  .custom-container
+    align-items: center
+    display: flex
+    margin-right: 10px
+
+    label
+      margin-right: 5px
+
+    span
+      font-size: 14px
+
+
+.task
+  background-color: #fff
+  border-radius: 5px
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+  margin: 10px 0
+  padding: 20px
+
+  .task-text
+    font-size: 16px
+    font-weight: bold
+    margin-bottom: 10px
+
+  .task-details
+    align-items: center
+    display: flex
+    justify-content: space-between
+
+    > *
+      flex: 1
+
+  .priority-container
+    order: 1
+  
+  .date-container
+    order: 2
+
+  .complete-button
+    background-color: #e74c3c
+    border: none
+    border-radius: 5px
+    color: #fff
+    cursor: pointer
+    padding: 5px 10px
+    transition: background-color 0.3s ease
+    order: 3
+
+    &:hover
+      background-color: darken(#e74c3c, 10%)
+
+.tasks-modal
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    background-color: rgba(0, 0, 0, 0.7)
+    display: flex
+    justify-content: center
+    align-items: center
+    z-index: 1000 // para asegurarse de que se muestre por encima de otros elementos
+
+    .close-button
+      display: flex
+      justify-content: center
+      align-items: center
+
+.tasks-modal > div
+  background-color: white
+  padding: 20px
+  border-radius: 5px
+  width: 70%
+  max-width: 500px
+  overflow-y: auto // para que se pueda desplazar si hay muchas tareas
+  margin-bottom: 20px
+
+
+.tasks-modal-container  // Añade el nuevo estilo aquí
+    display: flex
+    flex-direction: column      
+
+
+// New Task Styles
+.new-task
+  background-color: #fff
+  border-radius: 5px
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1)
+  margin: 10px 0
+  padding: 10px
+
+  .input-group
+    margin-bottom: 10px
+    display: flex 
+
+  .task-input
+    font-size: 14px
+    height: 40px
+    width: 100%
+    padding: 0 10px
+    flex: 1
+
+  .action-container
+    align-items: center
+    display: flex
+    justify-content: space-between
+    width: 100%
+
+  .custom-container
+    flex: 1
+
+  button
+    padding: 0px 10px
+
+  .priority-container, .date-container
+    flex: 1
+
+// Calendar styles
+#calendarContainer
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 10px
+  width: 100%
+
+.calendar-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 5px 10px
+  font-weight: bold
+
+  button
+    background-color: transparent
+    color: #000
+    border: none
+    transition: none
+    align-items: center
+    padding: 0
+    margin: 0
+    cursor: pointer
+
+    &:hover, &:focus
+      background-color: transparent
+      color: #666
+
+.weekdays-header
+  display: grid
+  grid-template-columns: repeat(7, 1fr)
+  gap: 10px
+  width: 100%
+
+  > div
+    display: flex
+    align-items: center
+    justify-content: center
+    margin: 0
+    padding: 0
+
+.calendar-dates-container
+  display: grid
+  grid-template-columns: repeat(7, 1fr)
+  gap: 10px
+  width: 100%
+
+.calendar-day
+  width: 100%
+  height: 40px
+  display: flex
+  align-items: center
+  justify-content: center
+  border: 1px solid #ccc
+  margin: 0
+  padding: 0
+
+  &.has-tasks
+    background-color: #e74c3c
+    color: #fff
+    cursor: pointer
+
+  &.out-of-month
+    color: gray
+
+
+.close-modal-button
+  display: flex
+  align-items: center
+  justify-content: center
+  height: 30px
+
+
+// Projects Styles
+
+#projectsContainer
+  display: flex // Para que los elementos se muestren en línea
+  align-items: center // Para centrar verticalmente los elementos
+  flex-direction: column
+
+#projectsContainer input[type="text"]
+  flex: 1 // El input ocupará todo el espacio disponible
+  margin-right: 10px // Espacio entre el input y los botones
+  height: $common-height
+  padding: 0 10px
+
+#projectsContainer button
+  background-color: $bg-color-button
+  color: $color-inverse
+  padding: 10px 20px
+  border: none
+  border-radius: 5px
+  cursor: pointer
+  transition: background-color 0.3s ease
+  font-size: 14px
+  text-align: center
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
+
+#projectInputContainer
+  display: flex
+  align-items: center
+  justify-content: center
+  margin-bottom: 10px
+
+.input-and-buttons-container
+  display: flex
+  align-items: center
+
+.project-container
+  display: grid
+  grid-template-columns: 1fr   // Cada proyecto toma el mismo espacio
+  gap: 10px
+
+#createProjectButton
+  margin-bottom: 20px
+
+.project-item
+  background-color: white
+  padding: 10px 20px
+  border-radius: 10px
+  display: flex
+  flex-direction: row  // Alinea los elementos en una fila
+  align-items: center
+  width: 100%
+  min-width: 300px
+  margin: 10px 0
+  // haz que los elementos de dentro tengan un espacio de manera que los botonos (button) vayan a la derecha del todo
+  justify-content: space-between
+
+  .text-container
+    flex: 1             // El contenedor de texto ocupa el espacio restante
+    white-space: nowrap // Evita que el texto se desborde
+
+  .buttons-container
+    display: flex
+    align-items: center
+    justify-content: flex-end  // Alinea los botones a la derecha
+
+    button
+      min-width: 60px
+
+    button:not(:first-child)  // Aplica estilo a todos los botones excepto el primero (Delete)
+      margin-left: 5px  // Establece un pequeño margen entre ellos
+
+
+// Estilo del footer
+footer
+  text-align: center
+  position: fixed
+  bottom: 0
+  left: 0
+  width: 100%
+  background-color: #f0f0f0
+  padding: 10px 0
+
+  p
+    margin: 20px 0 // Add margin to the top and bottom
+    font-size: 18px
+    display: flex
+    // flex-direction: column // Cambiar la dirección de flexbox a columna
+    justify-content: center // Centrar horizontalmente
+    align-items: center // Centrar verticalmente
+    gap: 10px // Agregar espacio (gap) entre elementos
+
+
+
+  a
+    text-decoration: none
+    font-size: 18px
+    color: black
+
+  // Estilo del icono de GitHub
+  .github-icon
+    font-size: 24px
+    margin-right: 30px // Agregar margen a la derecha del icono
+    
+    &:hover, &.active
+      color: #15c1ff
+
+i
+  margin-right: 10px
+
+
+#menuTasks::before
+  content: "\f0ca"
+  font-family: "Font Awesome 5 Free"
+  padding-right: 8px
+  font-weight: 900
+
+#menuProjects::before
+  content: "\f07b"
+  font-family: "Font Awesome 5 Free"
+  padding-right: 8px
+  font-weight: 900
+
+#menuDates::before
+  content: "\f073"
+  font-family: "Font Awesome 5 Free"
+  padding-right: 8px
+  font-weight: 900
+
+#menuTasks, #togglePriorities, #menuProjects, #menuDates
+  &:hover, &.active
+    color: #15c1ff
+
+----------------------------------------
+
+src/js/projectManager.js:
+
+// projectManager.js
+
+import {
+    addProjectToLocalStorage,
+    loadProjectsFromLocalStorage,
+    removeProjectFromLocalStorage 
+} from "./localStorageManager";
+
+// Helper Functions
+function createProjectElement(projectName) {
+    const projectElement = document.createElement("div");
+    projectElement.className = "project-item";
+
+    const projectNameElement = document.createElement("span");
+    projectNameElement.textContent = projectName;
+
+    const buttonsContainer = createProjectButtonsContainer(projectName, projectElement);
+
+    projectElement.appendChild(projectNameElement);
+    projectElement.appendChild(buttonsContainer);
+
+    return projectElement;
+}
+
+function createProjectButtonsContainer(projectName, projectElement) {
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.className = "buttons-container";
+
+    const viewButton = document.createElement("button");
+    viewButton.textContent = "View";
+    viewButton.addEventListener("click", () => {
+        // Funcionalidad para ver el proyecto
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.id = `deleteProjectButton_${projectName}`;
+    deleteButton.addEventListener("click", () => {
+        projectElement.remove();
+        removeProjectFromLocalStorage(projectName);
+    });
+
+    buttonsContainer.appendChild(viewButton);
+    buttonsContainer.appendChild(deleteButton);
+    return buttonsContainer;
+}
+
+// Main Functions
+export function displayProject(projectName, projectsContainer) {
+    const projectElement = createProjectElement(projectName);
+    projectsContainer.appendChild(projectElement);
+}
+
+export function loadAndDisplaySavedProjects(projectsContainer) {
+    // Referencia al contenedor de la lista de proyectos
+    const projectsListContainer = document.getElementById("projectsList");
+
+    // Limpia cualquier proyecto existente en el contenedor
+    projectsListContainer.innerHTML = "";
+
+    const savedProjects = loadProjectsFromLocalStorage();
+    savedProjects.forEach(projectName => {
+        displayProject(projectName, projectsContainer);
+    });
+}
+
+export function setupCreateProjectButton(createProjectButton, projectsContainer) {
+    createProjectButton.addEventListener("click", () => {
+        toggleProjectInput(createProjectButton, projectsContainer);
+    });
+
+    // Setting up the event listener for the "Projects" label here to ensure it's only set once.
+    const projectsLabel = document.querySelector("#menuProjects");
+    projectsLabel.addEventListener("click", () => {
+        const addTaskButton = document.getElementById("addTaskButton");
+        if (addTaskButton) {
+            addTaskButton.style.display = "none";
+        }
+
+        projectsContainer.style.display = "flex";
+        const tasksContainer = document.getElementById("tasks");
+        tasksContainer.style.display = "none";
+    });
+}
+
+let isInputShown = false;
+
+function toggleProjectInput(createProjectButton, projectsContainer) {
+
+    if (isInputShown) return;
+
+    const projectInput = document.createElement("input");
+    projectInput.type = "text";
+    projectInput.placeholder = "Project Name";
+
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add";
+
+    addButton.addEventListener("click", () => {
+        const projectName = projectInput.value.trim();
+    
+        if (!projectName) {  // Comprobar si el nombre del proyecto está vacío
+            alert('Please, enter a project title.');
+            return;
+        }
+    
+        // Guardar el proyecto en localStorage
+        addProjectToLocalStorage(projectName);
+    
+        // Mostrar el proyecto en la interfaz
+        displayProject(projectName, projectsContainer);
+    
+        projectInput.value = "";
+        inputAndButtonsContainer.remove();
+        isInputShown = false;
+    });
+
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancel";
+
+    cancelButton.addEventListener("click", () => {
+        inputAndButtonsContainer.remove();
+        isInputShown = false;
+    });
+
+    const createProjectActions = document.createElement("div");
+    createProjectActions.appendChild(addButton);
+    createProjectActions.appendChild(cancelButton);
+
+    const inputAndButtonsContainer = document.createElement("div");
+    inputAndButtonsContainer.className = "input-and-buttons-container";
+    inputAndButtonsContainer.appendChild(projectInput);
+    inputAndButtonsContainer.appendChild(createProjectActions);
+
+    createProjectButton.insertAdjacentElement('afterend', inputAndButtonsContainer);
+    projectInput.style.display = "block";
+    createProjectActions.style.display = "flex";
+    projectInput.focus();
+
+    isInputShown = true; // Establecemos isInputShown como true cuando el formulario está visible
+
 }
 
 ----------------------------------------

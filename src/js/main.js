@@ -49,9 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function setupProjectEnvironment() {
     const createProjectButton = document.getElementById("createProjectButton");
-    const createProjectContainer = document.getElementById("createProjectContainer");
+    const projectsContainer = document.getElementById("projectsContainer");
     createProjectButton.style.display = "none";
-    setupCreateProjectButton(createProjectButton, createProjectContainer);
+    setupCreateProjectButton(createProjectButton, projectsContainer);
 }
 
 function setupTaskEnvironment() {
@@ -224,21 +224,21 @@ function setupPrioritiesSubMenu() {
       filterTasksByPriority(selectedPriority);
       const tasksContainer = document.getElementById("tasks");
       tasksContainer.style.display = "block";      
-      const createProjectContainer = document.getElementById("createProjectContainer");
+      const projectsContainer = document.getElementById("projectsContainer");
       const calendarContainer = document.getElementById("calendarContainer");
-      createProjectContainer.style.display = "none";
+      projectsContainer.style.display = "none";
       calendarContainer.innerHTML = "";
     }
   });
 }
 
 function setupProjectsLabel() {
-  const projectsLabel = document.querySelector("#projectsMenuItem");
+  const projectsLabel = document.querySelector("#menuProjects");
   let projectsAreShown = false;
-  const createProjectContainer = document.getElementById(
-    "createProjectContainer"
+  const projectsContainer = document.getElementById(
+    "projectsContainer"
   );
-  createProjectContainer.classList.add("project-container");
+  projectsContainer.classList.add("project-container");
   projectsLabel.addEventListener("click", () => {
 
     if (!projectsAreShown) {
@@ -247,8 +247,8 @@ function setupProjectsLabel() {
         addTaskButton.style.display = "none";
       }
   
-      createProjectContainer.style.display = "block";  
-      loadAndDisplaySavedProjects(createProjectContainer);
+      projectsContainer.style.display = "block";  
+      loadAndDisplaySavedProjects(projectsContainer);
   
       const tasksContainer = document.getElementById("tasks");
       tasksContainer.style.display = "none";
@@ -270,7 +270,7 @@ function setupDatesLabel() {
 function setupSidebarItems() {
   const sidebarItems = document.querySelectorAll("aside ul li");
   const createProjectButton = document.getElementById("createProjectButton");
-  const createProjectContainer = document.getElementById("createProjectContainer");
+  const projectsContainer = document.getElementById("projectsContainer");
   sidebarItems.forEach((item) => {
     item.addEventListener("click", (event) => {
       const calendarContainer = document.getElementById("calendarContainer");
@@ -278,12 +278,12 @@ function setupSidebarItems() {
       switch (event.target.textContent) {
         case "Projects":
           createProjectButton.style.display = "block";
-          createProjectContainer.style.display = "block";
+          projectsContainer.style.display = "block";
           calendarContainer.innerHTML = ""; // Clear the calendar container
           break;
         case "Dates":
           createProjectButton.style.display = "none";
-          createProjectContainer.style.display = "none";
+          projectsContainer.style.display = "none";
   
           const allTasks = loadTasksFromLocalStorage();
           const tasksContainer = document.getElementById("tasks");
@@ -291,7 +291,7 @@ function setupSidebarItems() {
           break;
         default:
           createProjectButton.style.display = "none";
-          createProjectContainer.style.display = "none";
+          projectsContainer.style.display = "none";
           calendarContainer.innerHTML = ""; // Clear the calendar container
           break;
       }

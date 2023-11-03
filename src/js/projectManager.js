@@ -46,12 +46,12 @@ function createProjectButtonsContainer(projectName, projectElement) {
 }
 
 // Main Functions
-export function displayProject(projectName, createProjectContainer) {
+export function displayProject(projectName, projectsContainer) {
     const projectElement = createProjectElement(projectName);
-    createProjectContainer.appendChild(projectElement);
+    projectsContainer.appendChild(projectElement);
 }
 
-export function loadAndDisplaySavedProjects(createProjectContainer) {
+export function loadAndDisplaySavedProjects(projectsContainer) {
     // Referencia al contenedor de la lista de proyectos
     const projectsListContainer = document.getElementById("projectsList");
 
@@ -60,24 +60,24 @@ export function loadAndDisplaySavedProjects(createProjectContainer) {
 
     const savedProjects = loadProjectsFromLocalStorage();
     savedProjects.forEach(projectName => {
-        displayProject(projectName, createProjectContainer);
+        displayProject(projectName, projectsContainer);
     });
 }
 
-export function setupCreateProjectButton(createProjectButton, createProjectContainer) {
+export function setupCreateProjectButton(createProjectButton, projectsContainer) {
     createProjectButton.addEventListener("click", () => {
-        toggleProjectInput(createProjectButton, createProjectContainer);
+        toggleProjectInput(createProjectButton, projectsContainer);
     });
 
     // Setting up the event listener for the "Projects" label here to ensure it's only set once.
-    const projectsLabel = document.querySelector("#projectsMenuItem");
+    const projectsLabel = document.querySelector("#menuProjects");
     projectsLabel.addEventListener("click", () => {
         const addTaskButton = document.getElementById("addTaskButton");
         if (addTaskButton) {
             addTaskButton.style.display = "none";
         }
 
-        createProjectContainer.style.display = "flex";
+        projectsContainer.style.display = "flex";
         const tasksContainer = document.getElementById("tasks");
         tasksContainer.style.display = "none";
     });
@@ -85,7 +85,7 @@ export function setupCreateProjectButton(createProjectButton, createProjectConta
 
 let isInputShown = false;
 
-function toggleProjectInput(createProjectButton, createProjectContainer) {
+function toggleProjectInput(createProjectButton, projectsContainer) {
 
     if (isInputShown) return;
 
@@ -108,7 +108,7 @@ function toggleProjectInput(createProjectButton, createProjectContainer) {
         addProjectToLocalStorage(projectName);
     
         // Mostrar el proyecto en la interfaz
-        displayProject(projectName, createProjectContainer);
+        displayProject(projectName, projectsContainer);
     
         projectInput.value = "";
         inputAndButtonsContainer.remove();
